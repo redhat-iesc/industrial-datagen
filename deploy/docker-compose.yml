@@ -1,0 +1,40 @@
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../deploy/Containerfile.backend-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - INDGEN_DEBUG=true
+      - INDGEN_CORS_ORIGINS=["http://localhost:5173"]
+    volumes:
+      - ../backend/app:/app/app
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../deploy/Containerfile.frontend-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../frontend/src:/app/src
+    depends_on:
+      - backend
+
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=indgen
+      - POSTGRES_USER=indgen
+      - POSTGRES_PASSWORD=indgen
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    profiles:
+      - db
+
+volumes:
+  pgdata:
