@@ -4,8 +4,8 @@ Industrial process simulation platform for AI/ML dataset generation. Rewrite of 
 
 ## Stack
 
-- **Backend:** Python 3.12+, FastAPI, uvicorn, Pydantic
-- **Frontend:** React 19, TypeScript, Vite, PatternFly v6
+- **Backend:** Python 3.12+, FastAPI, uvicorn, Pydantic, uv
+- **Frontend:** React 19, TypeScript, Vite, PatternFly v6, pnpm
 - **Testing:** pytest + pytest-bdd (backend), Vitest + RTL + Playwright (frontend)
 - **Deployment:** Containerfile, OpenShift Helm chart, bootc
 
@@ -63,13 +63,19 @@ deploy/           Deployment configs
 
 ## Simulators
 
-Five physics-based industrial process simulators:
-1. **Refinery** — crude oil distillation (16 output fields)
-2. **Chemical** — CSTR continuous reactor (16 output fields)
-3. **Pulp & Paper** — Kraft digester (24 output fields)
-4. **Pharmaceutical** — GMP batch reactor (24 output fields)
-5. **Rotating Equipment** — predictive maintenance with fault injection (18 output fields)
+Five physics-based industrial process simulators (see [docs/SIMULATORS.md](docs/SIMULATORS.md) for full parameter/output specs):
+1. **Refinery** — crude oil distillation (4 params, 17 outputs)
+2. **Chemical** — CSTR continuous reactor (6 params, 17 outputs)
+3. **Pulp & Paper** — Kraft digester (6 params, 25 outputs)
+4. **Pharmaceutical** — GMP batch reactor (7 params, 26 outputs)
+5. **Rotating Equipment** — predictive maintenance with fault injection (6 params, 20 outputs)
 
 ## Documentation
 
-- [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) — phased build plan with architecture decisions
+- [Architecture](docs/ARCHITECTURE.md) — system design, data flow, project structure (with mermaid diagrams)
+- [API Reference](docs/API_REFERENCE.md) — all REST, WebSocket, and SSE endpoints
+- [Simulators](docs/SIMULATORS.md) — physics models, parameters, output fields
+- [Data Model](docs/DATA_MODEL.md) — TypeScript/Pydantic types, storage contract
+- [Development](docs/DEVELOPMENT.md) — setup, testing, code conventions, dependency list
+- [Deployment](docs/DEPLOYMENT.md) — container builds, Docker Compose, OpenShift, bootc
+- [Diagrams](docs/diagrams/) — standalone `.mermaid` source files for all architecture diagrams
