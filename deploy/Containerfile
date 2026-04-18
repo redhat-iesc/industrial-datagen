@@ -1,5 +1,5 @@
-# Stage 1: Build React frontend
-FROM node:22-slim AS frontend-build
+# Stage 1: Build React frontend (native arch only — output is static assets)
+FROM --platform=$BUILDPLATFORM node:22-slim AS frontend-build
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
