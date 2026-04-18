@@ -3,18 +3,18 @@ from app.storage.base import BaseStorage
 
 class MemoryStorage(BaseStorage):
     def __init__(self) -> None:
-        self._simulations: dict[str, dict] = {}
-        self._simulation_data: dict[str, list[dict]] = {}
-        self._datasets: dict[str, dict] = {}
-        self._dataset_rows: dict[str, list[dict]] = {}
+        self._simulations: dict[str, dict[str, object]] = {}
+        self._simulation_data: dict[str, list[dict[str, object]]] = {}
+        self._datasets: dict[str, dict[str, object]] = {}
+        self._dataset_rows: dict[str, list[dict[str, object]]] = {}
 
-    async def save_simulation(self, sim_id: str, data: dict) -> None:
+    async def save_simulation(self, sim_id: str, data: dict[str, object]) -> None:
         self._simulations[sim_id] = data
 
-    async def get_simulation(self, sim_id: str) -> dict | None:
+    async def get_simulation(self, sim_id: str) -> dict[str, object] | None:
         return self._simulations.get(sim_id)
 
-    async def list_simulations(self) -> list[dict]:
+    async def list_simulations(self) -> list[dict[str, object]]:
         return list(self._simulations.values())
 
     async def delete_simulation(self, sim_id: str) -> bool:
@@ -24,28 +24,28 @@ class MemoryStorage(BaseStorage):
             return True
         return False
 
-    async def append_simulation_data(self, sim_id: str, row: dict) -> None:
+    async def append_simulation_data(self, sim_id: str, row: dict[str, object]) -> None:
         if sim_id not in self._simulation_data:
             self._simulation_data[sim_id] = []
         self._simulation_data[sim_id].append(row)
 
     async def get_simulation_history(
         self, sim_id: str, limit: int = 100, offset: int = 0
-    ) -> list[dict]:
+    ) -> list[dict[str, object]]:
         data = self._simulation_data.get(sim_id, [])
         return data[offset : offset + limit]
 
-    async def get_simulation_latest(self, sim_id: str) -> dict | None:
+    async def get_simulation_latest(self, sim_id: str) -> dict[str, object] | None:
         data = self._simulation_data.get(sim_id, [])
         return data[-1] if data else None
 
-    async def save_dataset(self, dataset_id: str, data: dict) -> None:
+    async def save_dataset(self, dataset_id: str, data: dict[str, object]) -> None:
         self._datasets[dataset_id] = data
 
-    async def get_dataset(self, dataset_id: str) -> dict | None:
+    async def get_dataset(self, dataset_id: str) -> dict[str, object] | None:
         return self._datasets.get(dataset_id)
 
-    async def list_datasets(self) -> list[dict]:
+    async def list_datasets(self) -> list[dict[str, object]]:
         return list(self._datasets.values())
 
     async def delete_dataset(self, dataset_id: str) -> bool:
@@ -55,8 +55,8 @@ class MemoryStorage(BaseStorage):
             return True
         return False
 
-    async def save_dataset_rows(self, dataset_id: str, rows: list[dict]) -> None:
+    async def save_dataset_rows(self, dataset_id: str, rows: list[dict[str, object]]) -> None:
         self._dataset_rows[dataset_id] = rows
 
-    async def get_dataset_rows(self, dataset_id: str) -> list[dict]:
+    async def get_dataset_rows(self, dataset_id: str) -> list[dict[str, object]]:
         return self._dataset_rows.get(dataset_id, [])
