@@ -1,9 +1,9 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class SimulationStatus(str, Enum):
+class SimulationStatus(StrEnum):
     RUNNING = "running"
     STOPPED = "stopped"
     COMPLETED = "completed"

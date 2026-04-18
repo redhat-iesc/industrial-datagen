@@ -8,7 +8,7 @@ router = APIRouter(tags=["processes"])
 @router.get("/processes")
 async def list_processes():
     processes = []
-    for name, cls in SIMULATOR_REGISTRY.items():
+    for _name, cls in SIMULATOR_REGISTRY.items():
         sim = cls()
         processes.append(sim.get_schema())
     return processes
