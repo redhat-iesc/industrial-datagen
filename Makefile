@@ -1,29 +1,29 @@
 .PHONY: dev-backend dev-frontend test test-backend test-frontend test-e2e lint type-check build clean
 
 dev-backend:
-	cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --port 8000
+	cd backend && uv run uvicorn app.main:app --reload --port 8000
 
 dev-frontend:
-	cd frontend && npm run dev
+	cd frontend && pnpm run dev
 
 test: test-backend test-frontend
 
 test-backend:
-	cd backend && source .venv/bin/activate && pytest -v --cov=app --cov-report=term-missing
+	cd backend && uv run pytest -v --cov=app --cov-report=term-missing
 
 test-frontend:
-	cd frontend && npx vitest run
+	cd frontend && pnpm exec vitest run
 
 test-e2e:
-	cd frontend && npx playwright test
+	cd frontend && pnpm exec playwright test
 
 lint:
-	cd backend && source .venv/bin/activate && ruff check app/ tests/
-	cd frontend && npx tsc --noEmit
+	cd backend && uv run ruff check app/ tests/
+	cd frontend && pnpm exec tsc --noEmit
 
 type-check:
-	cd backend && source .venv/bin/activate && mypy app/
-	cd frontend && npx tsc --noEmit
+	cd backend && uv run mypy app/
+	cd frontend && pnpm exec tsc --noEmit
 
 build:
 	podman build -f deploy/Containerfile -t industrial-datagen:latest .
