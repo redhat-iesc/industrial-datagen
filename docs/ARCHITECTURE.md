@@ -115,13 +115,25 @@ Two transport options for live simulation data:
 
 2. **WebSocket** — `WS /api/ws/simulation/{id}`. Lower latency alternative. Both poll [`storage.get_simulation_latest()`](../backend/app/storage/base.py) every 500ms and push new data points to the client.
 
+### RTSP Camera Feeds
+
+Each of the 5 industrial process types can have one RTSP camera URL configured. The [`RTSPStreamManager`](../backend/app/rtsp/manager.py) manages ffmpeg subprocess lifecycle:
+
+1. User sets RTSP URL via `PUT /api/rtsp/config/{processType}`
+2. User starts stream via `POST /api/rtsp/{processType}/start`
+3. Manager spawns `ffmpeg` with `-f hls` output, writing `.m3u8` playlist and `.ts` segments to `/tmp/rtsp-streams/{processType}/`
+4. Manager monitors ffmpeg stderr for `frame=`/`fps=` patterns to detect STARTING → STREAMING transition
+5. Frontend uses [hls.js](https://github.com/video-dev/hls.js) to play `GET /api/rtsp/{processType}/stream.m3u8`
+6. On stop, manager terminates ffmpeg and cleans up temp files
+
 ### Application Lifecycle
 
 The FastAPI app uses a [lifespan context manager](../backend/app/main.py) to:
 - Initialize `app.state.storage` (MemoryStorage instance)
 - Initialize `app.state.active_simulations` (live simulator objects by ID)
 - Initialize `app.state.simulation_tasks` (asyncio tasks by ID)
-- Cancel all running simulation tasks on shutdown
+- Initialize `app.state.rtsp_manager` (RTSPStreamManager instance)
+- Stop all RTSP streams and cancel all simulation tasks on shutdown
 
 ### Static File Serving
 

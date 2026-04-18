@@ -342,6 +342,82 @@ Returns aggregate statistics for a process type.
 
 ---
 
+## RTSP Camera Feeds
+
+RTSP camera feed management with ffmpeg-based HLS transcoding. Each of the 5 process types can have one RTSP camera URL configured. Streams are transcoded to HLS for browser playback.
+
+### `GET /rtsp/config`
+
+Returns RTSP configuration and stream status for all process types.
+
+**Response:** `200 OK`
+```json
+{
+  "refinery": { "url": "rtsp://camera:554/stream", "status": "streaming" },
+  "chemical": { "url": null, "status": "offline" },
+  "pulp": { "url": null, "status": "offline" },
+  "pharma": { "url": null, "status": "offline" },
+  "rotating": { "url": null, "status": "offline" }
+}
+```
+
+Stream status values: `offline`, `starting`, `streaming`, `error`
+
+### `PUT /rtsp/config/{processType}`
+
+Set or clear the RTSP URL for a process type.
+
+**Body:**
+```json
+{ "url": "rtsp://camera:554/stream" }
+```
+
+Pass `null` to clear the URL.
+
+**Response:** `200 OK` — updated config entry
+
+### `POST /rtsp/{processType}/start`
+
+Start ffmpeg transcoding for the configured RTSP URL.
+
+**Response:** `200 OK`
+```json
+{
+  "processType": "refinery",
+  "status": "starting",
+  "startedAt": "2025-01-15T10:30:00+00:00"
+}
+```
+
+### `POST /rtsp/{processType}/stop`
+
+Stop the ffmpeg process and clean up HLS files.
+
+**Response:** `200 OK`
+```json
+{
+  "processType": "refinery",
+  "status": "offline",
+  "startedAt": null
+}
+```
+
+### `GET /rtsp/{processType}/stream.m3u8`
+
+Serve the HLS playlist for browser playback via hls.js.
+
+**Response:** `200 OK` with `application/vnd.apple.mpegurl` content type
+
+### `GET /rtsp/{processType}/{segment}`
+
+Serve HLS `.ts` segments. Segment names must match `seg\d{3}\.ts`.
+
+**Response:** `200 OK` with `video/mp2t` content type
+
+**Source:** [`backend/app/api/rtsp.py`](../backend/app/api/rtsp.py)
+
+---
+
 ## Error Responses
 
 All errors return standard HTTP status codes with a JSON body:
