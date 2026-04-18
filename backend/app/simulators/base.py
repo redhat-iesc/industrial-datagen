@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
 import math
 import random
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 
 @dataclass

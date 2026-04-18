@@ -1,9 +1,8 @@
-import pytest
 from pytest_bdd import given, scenario, then, when
 from pytest_bdd.parsers import parse
 
-from app.simulators.rotating import RotatingEquipmentSimulator
 from app.simulators.refinery import RefinerySimulator
+from app.simulators.rotating import RotatingEquipmentSimulator
 
 
 # --- Scenarios ---

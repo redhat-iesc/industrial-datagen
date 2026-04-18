@@ -1,7 +1,6 @@
 import csv
 import io
 
-import pytest
 from pytest_bdd import given, scenario, then, when
 from pytest_bdd.parsers import parse
 

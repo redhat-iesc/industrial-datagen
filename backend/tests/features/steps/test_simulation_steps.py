@@ -1,10 +1,9 @@
-import pytest
-from pytest_bdd import given, when, then, scenario, parsers
+from pytest_bdd import given, parsers, scenario, then, when
 
-from app.simulators.refinery import RefinerySimulator
 from app.simulators.chemical import ChemicalSimulator
-from app.simulators.pulp import PulpSimulator
 from app.simulators.pharma import PharmaSimulator
+from app.simulators.pulp import PulpSimulator
+from app.simulators.refinery import RefinerySimulator
 from app.simulators.rotating import RotatingEquipmentSimulator
 
 SIMULATORS = {
