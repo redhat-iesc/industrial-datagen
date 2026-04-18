@@ -18,14 +18,22 @@ def _validate_process_type(process_type: str) -> None:
 
 
 def _get_manager(request: Request) -> RTSPStreamManager:
-    return request.app.state.rtsp_manager
+    manager: RTSPStreamManager = request.app.state.rtsp_manager
+    return manager
+
+
+def _config_to_entry(cfg: dict[str, str | None]) -> RTSPConfigEntry:
+    return RTSPConfigEntry(
+        url=cfg.get("url"),
+        status=StreamStatus(str(cfg.get("status", "offline"))),
+    )
 
 
 @router.get("/config")
 async def get_rtsp_config(request: Request) -> dict[str, RTSPConfigEntry]:
     manager = _get_manager(request)
     configs = manager.get_all_configs(list(VALID_PROCESS_TYPES))
-    return {pt: RTSPConfigEntry(**cfg) for pt, cfg in configs.items()}
+    return {pt: _config_to_entry(cfg) for pt, cfg in configs.items()}
 
 
 @router.put("/config/{process_type}")
@@ -34,7 +42,7 @@ async def set_rtsp_url(process_type: str, body: SetRTSPUrlRequest, request: Requ
     manager = _get_manager(request)
     manager.set_url(process_type, body.url)
     cfg = manager.get_config(process_type)
-    return RTSPConfigEntry(**cfg)
+    return _config_to_entry(cfg)
 
 
 @router.post("/{process_type}/start")
