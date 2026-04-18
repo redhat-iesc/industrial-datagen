@@ -1,5 +1,6 @@
 import math
 import random
+from typing import Any
 
 from app.simulators.base import BaseSimulator, OutputField, ParameterDef
 
@@ -75,7 +76,7 @@ class PulpSimulator(BaseSimulator):
         alkali_effect = min(1, alkali_conc / self.OPTIMAL_ALKALI)
         return self.TARGET_LIGNIN_REMOVAL * h_factor_effect * alkali_effect
 
-    def step(self) -> dict:
+    def step(self) -> dict[str, Any]:
         t = self.state["timeStep"]
         p = self.parameters
 
@@ -160,7 +161,7 @@ class PulpSimulator(BaseSimulator):
             "totalPulpProduced": round(self.state["totalPulpProduced"], 2),
         }
 
-    def _normal_params(self, index: int) -> dict:
+    def _normal_params(self, index: int) -> dict[str, float]:
         return {
             "woodInput": 47 + random.random() * 6,
             "alkaliConc": 9 + random.random() * 2,
@@ -170,7 +171,7 @@ class PulpSimulator(BaseSimulator):
             "whiteChipRatio": 0.93 + random.random() * 0.05,
         }
 
-    def _anomaly_params(self, index: int) -> dict:
+    def _anomaly_params(self, index: int) -> dict[str, float]:
         return {
             "woodInput": 35 + random.random() * 35,
             "alkaliConc": 6 + random.random() * 8,

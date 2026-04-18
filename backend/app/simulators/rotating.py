@@ -1,5 +1,6 @@
 import math
 import random
+from typing import Any
 
 from app.simulators.base import BaseSimulator, OutputField, ParameterDef
 
@@ -74,7 +75,7 @@ class RotatingEquipmentSimulator(BaseSimulator):
 
     def _compute_wpd(
         self, vib_x: float, vib_y: float, vib_z: float, fault_type: str
-    ) -> dict:
+    ) -> dict[str, float]:
         wpd1 = (vib_x * 0.3 + vib_y * 0.3 + vib_z * 0.4) ** 2 * 0.1
         wpd2 = vib_x**2 * 0.15
         wpd3 = (vib_y * 0.7 + vib_z * 0.3) ** 2 * 0.08
@@ -107,7 +108,7 @@ class RotatingEquipmentSimulator(BaseSimulator):
             "wpdBand5Energy": round(wpd5, 6),
         }
 
-    def step(self) -> dict:
+    def step(self) -> dict[str, Any]:
         t = self.state["timeStep"]
         p = self.parameters
 
@@ -219,7 +220,7 @@ class RotatingEquipmentSimulator(BaseSimulator):
     def _anomaly_rate(self) -> float:
         return 0.25
 
-    def _normal_params(self, index: int) -> dict:
+    def _normal_params(self, index: int) -> dict[str, float]:
         return {
             "nominalRPM": 3500 + random.random() * 200,
             "loadPercent": 40 + random.random() * 55,
@@ -229,7 +230,7 @@ class RotatingEquipmentSimulator(BaseSimulator):
             "balanceGrade": 1.0 + random.random() * 2.5,
         }
 
-    def _anomaly_params(self, index: int) -> dict:
+    def _anomaly_params(self, index: int) -> dict[str, float]:
         return {
             "nominalRPM": 3200 + random.random() * 800,
             "loadPercent": 40 + random.random() * 55,
@@ -241,7 +242,7 @@ class RotatingEquipmentSimulator(BaseSimulator):
 
     def generate_dataset(
         self, samples: int, include_anomalies: bool = True
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         fault_types = ["bearing_fault", "rotor_imbalance", "misalignment"]
         dataset = []
         for i in range(samples):
