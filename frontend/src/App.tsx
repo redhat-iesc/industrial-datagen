@@ -22,6 +22,7 @@ import { BrowserRouter, Link, Route, Routes, useLocation } from 'react-router-do
 
 import Dashboard from './pages/Dashboard'
 import Datasets from './pages/Datasets'
+import Documentation from './pages/Documentation'
 
 function AppNav() {
   const location = useLocation()
@@ -34,6 +35,9 @@ function AppNav() {
         </NavItem>
         <NavItem isActive={location.pathname === '/datasets'}>
           <Link to="/datasets">Datasets</Link>
+        </NavItem>
+        <NavItem isActive={location.pathname === '/documentation'}>
+          <Link to="/documentation">Documentation</Link>
         </NavItem>
       </NavList>
     </Nav>
@@ -88,6 +92,7 @@ function AppLayout() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/datasets" element={<Datasets />} />
+        <Route path="/documentation" element={<Documentation />} />
       </Routes>
     </Page>
   )
