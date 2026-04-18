@@ -15,7 +15,7 @@ LABEL org.opencontainers.image.description="Industrial process simulation platfo
 LABEL org.opencontainers.image.version="0.1.0"
 LABEL org.opencontainers.image.vendor="Red Hat Demo"
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+RUN pip install --no-cache-dir uv
 
 WORKDIR /app
 
