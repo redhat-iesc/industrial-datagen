@@ -1,5 +1,4 @@
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 import pytest
 from httpx import ASGITransport, AsyncClient

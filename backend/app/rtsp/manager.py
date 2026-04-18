@@ -1,8 +1,9 @@
 import asyncio
+import contextlib
 import re
 import shutil
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from app.models.rtsp import StreamStatus
@@ -72,7 +73,7 @@ class RTSPStreamManager:
         state = StreamState(
             process=process,
             status=StreamStatus.STARTING,
-            started_at=datetime.now(timezone.utc).isoformat(),
+            started_at=datetime.now(UTC).isoformat(),
         )
         self._streams[process_type] = state
 
@@ -89,16 +90,14 @@ class RTSPStreamManager:
 
         if state._monitor_task and not state._monitor_task.done():
             state._monitor_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await state._monitor_task
-            except asyncio.CancelledError:
-                pass
 
         if state.process and state.process.returncode is None:
             state.process.terminate()
             try:
                 await asyncio.wait_for(state.process.wait(), timeout=5.0)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 state.process.kill()
                 await state.process.wait()
 

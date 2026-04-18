@@ -56,7 +56,8 @@ class TestStreamLifecycle:
         mock_process.wait = AsyncMock(return_value=0)
         mock_process.terminate = MagicMock()
 
-        with patch("app.rtsp.manager.asyncio.create_subprocess_exec", return_value=mock_process) as mock_exec:
+        patch_target = "app.rtsp.manager.asyncio.create_subprocess_exec"
+        with patch(patch_target, return_value=mock_process) as mock_exec:
             state = await manager.start_stream("refinery")
 
             mock_exec.assert_called_once()
