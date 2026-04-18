@@ -4,7 +4,6 @@ from pytest_bdd.parsers import parse
 from app.simulators.refinery import RefinerySimulator
 from app.simulators.rotating import RotatingEquipmentSimulator
 
-
 # --- Scenarios ---
 
 @scenario("anomaly_injection.feature", "Inject bearing fault into rotating equipment")
