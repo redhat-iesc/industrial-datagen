@@ -1,27 +1,43 @@
 services:
-  backend:
+  app:
     build:
-      context: ../backend
-      dockerfile: ../deploy/Containerfile.backend-dev
+      context: ..
+      dockerfile: deploy/Containerfile
     ports:
       - "8000:8000"
     environment:
       - INDGEN_DEBUG=true
-      - INDGEN_CORS_ORIGINS=["http://localhost:5173"]
-    volumes:
-      - ../backend/app:/app/app
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+      - INDGEN_CORS_ORIGINS=["*"]
+      - INDGEN_STATIC_DIR=/app/static
 
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: ../deploy/Containerfile.frontend-dev
+  app-dev-backend:
+    image: python:3.12-slim
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend:/app
+    command: >
+      sh -c "pip install -e '.[dev]' && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+    environment:
+      - INDGEN_DEBUG=true
+      - INDGEN_CORS_ORIGINS=["http://localhost:5173"]
+    profiles:
+      - dev
+
+  app-dev-frontend:
+    image: node:20-alpine
+    working_dir: /app
     ports:
       - "5173:5173"
     volumes:
-      - ../frontend/src:/app/src
+      - ../frontend:/app
+      - frontend_node_modules:/app/node_modules
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     depends_on:
-      - backend
+      - app-dev-backend
+    profiles:
+      - dev
 
   postgres:
     image: timescale/timescaledb:latest-pg16
@@ -38,3 +54,4 @@ services:
 
 volumes:
   pgdata:
+  frontend_node_modules:
