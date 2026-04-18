@@ -29,7 +29,7 @@ interface Props {
 
 export default function ProcessSelector({ selected, onSelect, disabled }: Props) {
   return (
-    <Gallery hasGutter minWidths={{ default: '180px' }}>
+    <Gallery hasGutter minWidths={{ default: '160px' }}>
       {PROCESSES.map(p => (
         <GalleryItem key={p.type}>
           <Card
@@ -38,6 +38,7 @@ export default function ProcessSelector({ selected, onSelect, disabled }: Props)
             isDisabled={disabled}
             onClick={() => !disabled && onSelect(p.type)}
             isCompact
+            className="rh-process-card"
           >
             <CardTitle>{p.label}</CardTitle>
             <CardBody>{p.description}</CardBody>

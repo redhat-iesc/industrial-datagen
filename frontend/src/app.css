@@ -1,0 +1,122 @@
+:root {
+  --rh-red: #ee0000;
+  --rh-red-dark: #a30000;
+  --rh-dark: #151515;
+  --rh-dark-200: #1a1a1a;
+  --rh-dark-300: #292929;
+  --rh-white: #ffffff;
+  --rh-gray-100: #f5f5f5;
+
+  --pf-t--global--color--brand--default: var(--rh-red);
+  --pf-t--global--color--brand--hover: var(--rh-red-dark);
+  --pf-t--global--color--brand--clicked: #8f0000;
+
+  font-family: 'Red Hat Text', var(--pf-t--global--font--family--text), sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+.pf-v6-c-title,
+.pf-v6-c-card__title-text,
+.pf-v6-c-masthead__brand {
+  font-family: 'Red Hat Display', var(--pf-t--global--font--family--heading), sans-serif;
+}
+
+.rh-masthead {
+  --pf-v6-c-masthead--BackgroundColor: var(--rh-dark);
+  background-color: var(--rh-dark);
+  color: var(--rh-white);
+}
+
+.rh-masthead .pf-v6-c-masthead__brand {
+  color: var(--rh-white);
+}
+
+.rh-masthead .pf-v6-c-masthead__toggle .pf-v6-c-button {
+  color: var(--rh-white);
+}
+
+.rh-masthead .pf-v6-c-toolbar {
+  --pf-v6-c-toolbar--BackgroundColor: transparent;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.rh-brand-name {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--rh-white);
+}
+
+.rh-brand-version {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+}
+
+.rh-brand-accent {
+  width: 4px;
+  height: 24px;
+  background-color: var(--rh-red);
+  border-radius: 2px;
+  margin-right: 12px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.rh-page-header {
+  padding-bottom: 0;
+}
+
+.rh-page-header .pf-v6-c-title {
+  font-family: 'Red Hat Display', sans-serif;
+  font-weight: 600;
+}
+
+.rh-section-compact {
+  padding-top: var(--pf-t--global--spacer--md);
+  padding-bottom: var(--pf-t--global--spacer--md);
+}
+
+.pf-v6-c-card.rh-process-card {
+  border: 1px solid var(--pf-t--global--border--color--default);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.pf-v6-c-card.rh-process-card:hover {
+  border-color: var(--rh-red);
+  box-shadow: 0 2px 8px rgba(238, 0, 0, 0.1);
+}
+
+.pf-v6-c-card.rh-process-card.pf-m-selected,
+.pf-v6-c-card.rh-process-card.pf-m-selected:hover {
+  border-color: var(--rh-red) !important;
+  box-shadow: 0 0 0 2px rgba(238, 0, 0, 0.2) !important;
+  --pf-v6-c-card--m-selectable--m-selected--BorderColor: var(--rh-red);
+}
+
+.pf-v6-c-card.rh-process-card .pf-v6-c-card__title-text {
+  font-family: 'Red Hat Display', sans-serif;
+  font-weight: 600;
+}
+
+.rh-stat-value {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--rh-dark);
+}
+
+.rh-stat-meta {
+  font-size: 0.75rem;
+  color: var(--pf-t--global--color--status--info--default);
+}
+
+.pf-v6-c-slider__rail-track {
+  --pf-v6-c-slider__rail-track--before--fill--BackgroundColor: var(--rh-red);
+}
+
+.rh-nav .pf-v6-c-nav__link.pf-m-current {
+  --pf-v6-c-nav__link--m-current--BorderBottomColor: var(--rh-red);
+  border-left: 3px solid var(--rh-red);
+}

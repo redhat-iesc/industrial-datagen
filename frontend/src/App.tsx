@@ -27,7 +27,7 @@ function AppNav() {
   const location = useLocation()
 
   return (
-    <Nav aria-label="Main navigation">
+    <Nav aria-label="Main navigation" className="rh-nav">
       <NavList>
         <NavItem isActive={location.pathname === '/'}>
           <Link to="/">Dashboard</Link>
@@ -44,7 +44,7 @@ function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   const masthead = (
-    <Masthead>
+    <Masthead className="rh-masthead">
       <MastheadMain>
         <MastheadToggle>
           <PageToggleButton
@@ -57,15 +57,16 @@ function AppLayout() {
           </PageToggleButton>
         </MastheadToggle>
         <MastheadBrand data-testid="app-brand">
-          <span style={{ fontSize: '1.25rem', fontWeight: 600 }}>
-            Industrial Datagen
-          </span>
+          <span className="rh-brand-accent" />
+          <span className="rh-brand-name">Industrial Datagen</span>
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
         <Toolbar>
           <ToolbarContent>
-            <ToolbarItem>v0.1.0</ToolbarItem>
+            <ToolbarItem>
+              <span className="rh-brand-version">v0.1.0</span>
+            </ToolbarItem>
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>

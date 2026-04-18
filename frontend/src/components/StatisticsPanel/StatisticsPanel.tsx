@@ -39,10 +39,10 @@ export default function StatisticsPanel({ data }: Props) {
           <Card isCompact isPlain>
             <CardTitle style={{ fontSize: '0.85rem' }}>{s.key}</CardTitle>
             <CardBody>
-              <div style={{ fontSize: '1.5rem', fontWeight: 600 }}>
+              <div className="rh-stat-value">
                 {s.current.toFixed(2)}
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--pf-t--global--color--status--info--default)' }}>
+              <div className="rh-stat-meta">
                 min: {s.min.toFixed(2)} / max: {s.max.toFixed(2)} / avg: {s.avg.toFixed(2)}
               </div>
             </CardBody>

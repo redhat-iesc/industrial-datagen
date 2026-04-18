@@ -82,6 +82,12 @@ export default function ParameterPanel({ processType, parameters, onParameterCha
                       step={step}
                       onChange={(_e, val) => onParameterChange(def.name, val)}
                       showTicks={false}
+                      showBoundaries={false}
+                      customSteps={[
+                        { value: def.min, label: `${def.min}` },
+                        { value: def.max, label: `${def.max}` },
+                      ]}
+                      areCustomStepsContinuous
                     />
                   </div>
                   <NumberInput

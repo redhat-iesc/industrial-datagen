@@ -19,58 +19,62 @@ export default function Dashboard() {
 
   return (
     <>
-      <PageSection>
+      <PageSection className="rh-page-header">
         <Title headingLevel="h1">Simulation Dashboard</Title>
       </PageSection>
-      <PageSection>
-        <ProcessSelector
-          selected={sim.selectedProcess}
-          onSelect={sim.setSelectedProcess}
-          disabled={sim.isRunning}
-        />
-      </PageSection>
-      <PageSection>
-        <SimulationControls
-          isRunning={sim.isRunning}
-          backendMode={sim.backendMode}
-          onStart={sim.start}
-          onStop={sim.stop}
-          onReset={sim.reset}
-          onBackendModeChange={sim.setBackendMode}
-        />
-      </PageSection>
-      <PageSection>
-        <Grid hasGutter>
-          <GridItem span={8}>
-            <Stack hasGutter>
-              <StackItem>
-                <LiveChart data={sim.data} title="Process Trend Analysis" />
-              </StackItem>
-              <StackItem>
-                <StatisticsPanel data={sim.data} />
-              </StackItem>
-            </Stack>
-          </GridItem>
-          <GridItem span={4}>
-            <Stack hasGutter>
-              <StackItem>
-                <ParameterPanel
-                  processType={sim.selectedProcess}
-                  parameters={sim.parameters}
-                  onParameterChange={sim.updateParameter}
-                />
-              </StackItem>
-              {sim.selectedProcess === 'rotating' && (
-                <StackItem>
-                  <AnomalyPanel
-                    onInjectFault={sim.injectFault}
-                    isRunning={sim.isRunning}
-                  />
-                </StackItem>
-              )}
-            </Stack>
-          </GridItem>
-        </Grid>
+      <PageSection className="rh-section-compact">
+        <Stack hasGutter>
+          <StackItem>
+            <ProcessSelector
+              selected={sim.selectedProcess}
+              onSelect={sim.setSelectedProcess}
+              disabled={sim.isRunning}
+            />
+          </StackItem>
+          <StackItem>
+            <SimulationControls
+              isRunning={sim.isRunning}
+              backendMode={sim.backendMode}
+              onStart={sim.start}
+              onStop={sim.stop}
+              onReset={sim.reset}
+              onBackendModeChange={sim.setBackendMode}
+            />
+          </StackItem>
+          <StackItem>
+            <Grid hasGutter>
+              <GridItem span={8}>
+                <Stack hasGutter>
+                  <StackItem>
+                    <LiveChart data={sim.data} title="Process Trend Analysis" />
+                  </StackItem>
+                  <StackItem>
+                    <StatisticsPanel data={sim.data} />
+                  </StackItem>
+                </Stack>
+              </GridItem>
+              <GridItem span={4}>
+                <Stack hasGutter>
+                  <StackItem>
+                    <ParameterPanel
+                      processType={sim.selectedProcess}
+                      parameters={sim.parameters}
+                      onParameterChange={sim.updateParameter}
+                    />
+                  </StackItem>
+                  {sim.selectedProcess === 'rotating' && (
+                    <StackItem>
+                      <AnomalyPanel
+                        onInjectFault={sim.injectFault}
+                        isRunning={sim.isRunning}
+                      />
+                    </StackItem>
+                  )}
+                </Stack>
+              </GridItem>
+            </Grid>
+          </StackItem>
+        </Stack>
       </PageSection>
     </>
   );
