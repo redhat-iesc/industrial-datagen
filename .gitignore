@@ -48,3 +48,9 @@ frontend/playwright-report/
 
 # Claude
 .claude/
+
+# MCP config (local tool settings)
+.mcp.json
+
+# Playwright CLI artifacts
+.playwright-cli/
