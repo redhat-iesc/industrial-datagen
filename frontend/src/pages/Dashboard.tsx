@@ -12,10 +12,23 @@ import SimulationControls from '../components/SimulationControls';
 import LiveChart from '../components/LiveChart';
 import StatisticsPanel from '../components/StatisticsPanel';
 import AnomalyPanel from '../components/AnomalyPanel';
+import RTSPConfigPanel from '../components/RTSPConfigPanel';
+import RTSPVideoPlayer from '../components/RTSPVideoPlayer';
 import { useSimulation } from '../hooks/useSimulation';
+import { useRTSPStream } from '../hooks/useRTSPStream';
+import { getRTSPStreamUrl } from '../services/api';
+
+const PROCESS_NAMES: Record<string, string> = {
+  refinery: 'Refinery Distillation',
+  chemical: 'Chemical Reactor',
+  pulp: 'Pulp Digester',
+  pharma: 'Pharma Reactor',
+  rotating: 'Rotating Equipment',
+};
 
 export default function Dashboard() {
   const sim = useSimulation();
+  const rtsp = useRTSPStream();
 
   return (
     <>
@@ -41,6 +54,23 @@ export default function Dashboard() {
               onBackendModeChange={sim.setBackendMode}
             />
           </StackItem>
+          <StackItem>
+            <RTSPConfigPanel
+              configs={rtsp.configs}
+              onSaveUrl={rtsp.setUrl}
+              onStart={rtsp.startStream}
+              onStop={rtsp.stopStream}
+            />
+          </StackItem>
+          {rtsp.configs[sim.selectedProcess]?.status === 'streaming' && (
+            <StackItem>
+              <RTSPVideoPlayer
+                processType={sim.selectedProcess}
+                streamUrl={getRTSPStreamUrl(sim.selectedProcess)}
+                processName={PROCESS_NAMES[sim.selectedProcess] ?? sim.selectedProcess}
+              />
+            </StackItem>
+          )}
           <StackItem>
             <Grid hasGutter>
               <GridItem span={8}>

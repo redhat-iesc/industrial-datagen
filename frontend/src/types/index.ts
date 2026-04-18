@@ -53,3 +53,12 @@ export interface HealthInfo {
 }
 
 export type FaultType = 'bearing_fault' | 'rotor_imbalance' | 'misalignment' | 'no_fault';
+
+export type StreamStatus = 'offline' | 'starting' | 'streaming' | 'error';
+
+export interface RTSPConfig {
+  url: string | null;
+  status: StreamStatus;
+}
+
+export type RTSPConfigMap = Record<ProcessType, RTSPConfig>;
