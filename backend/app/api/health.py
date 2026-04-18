@@ -6,7 +6,7 @@ router = APIRouter()
 
 
 @router.get("/health")
-async def health() -> dict:
+async def health() -> dict[str, object]:
     from app.main import start_time
 
     return {

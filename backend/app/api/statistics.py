@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import APIRouter, HTTPException, Request
 
 from app.simulators import get_simulator_class
@@ -6,7 +8,7 @@ router = APIRouter(tags=["statistics"])
 
 
 @router.get("/statistics/{process_type}")
-async def get_statistics(process_type: str, request: Request):
+async def get_statistics(process_type: str, request: Request) -> dict[str, Any]:
     cls = get_simulator_class(process_type)
     if cls is None:
         raise HTTPException(status_code=404, detail=f"Unknown process type: {process_type}")

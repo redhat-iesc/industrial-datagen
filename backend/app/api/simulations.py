@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import time
 import uuid
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request
 
@@ -12,21 +13,23 @@ from app.models.simulation import (
     StartSimulationRequest,
 )
 from app.simulators import get_simulator_class
+from app.simulators.base import BaseSimulator
 from app.simulators.rotating import RotatingEquipmentSimulator
+from app.storage.base import BaseStorage
 
 router = APIRouter(tags=["simulations"])
 
 
-def _get_storage(request: Request):
-    return request.app.state.storage
+def _get_storage(request: Request) -> BaseStorage:
+    return request.app.state.storage  # type: ignore[no-any-return]
 
 
-def _get_active_sims(request: Request) -> dict:
-    return request.app.state.active_simulations
+def _get_active_sims(request: Request) -> dict[str, BaseSimulator]:
+    return request.app.state.active_simulations  # type: ignore[no-any-return]
 
 
-def _get_sim_tasks(request: Request) -> dict:
-    return request.app.state.simulation_tasks
+def _get_sim_tasks(request: Request) -> dict[str, asyncio.Task[None]]:
+    return request.app.state.simulation_tasks  # type: ignore[no-any-return]
 
 
 @router.get("/simulations")
@@ -34,7 +37,7 @@ async def list_simulations(
     request: Request,
     status: str | None = None,
     processType: str | None = None,  # noqa: N803
-):
+) -> list[dict[str, Any]]:
     storage = _get_storage(request)
     sims = await storage.list_simulations()
     if status:
@@ -45,7 +48,7 @@ async def list_simulations(
 
 
 @router.post("/simulation/start")
-async def start_simulation(body: StartSimulationRequest, request: Request):
+async def start_simulation(body: StartSimulationRequest, request: Request) -> dict[str, Any]:
     cls = get_simulator_class(body.process_type)
     if cls is None:
         raise HTTPException(status_code=400, detail=f"Unknown process type: {body.process_type}")
@@ -76,7 +79,9 @@ async def start_simulation(body: StartSimulationRequest, request: Request):
     return sim_info
 
 
-async def _run_simulation(request: Request, sim_id: str, sim, interval_ms: int):
+async def _run_simulation(
+    request: Request, sim_id: str, sim: BaseSimulator, interval_ms: int
+) -> None:
     storage = _get_storage(request)
     try:
         while True:
@@ -84,7 +89,8 @@ async def _run_simulation(request: Request, sim_id: str, sim, interval_ms: int):
             await storage.append_simulation_data(sim_id, row)
             sim_info = await storage.get_simulation(sim_id)
             if sim_info:
-                sim_info["stepCount"] = sim_info.get("stepCount", 0) + 1
+                step_count: int = sim_info.get("stepCount", 0)  # type: ignore[assignment]
+                sim_info["stepCount"] = step_count + 1
                 await storage.save_simulation(sim_id, sim_info)
             await asyncio.sleep(interval_ms / 1000.0)
     except asyncio.CancelledError:
@@ -92,7 +98,7 @@ async def _run_simulation(request: Request, sim_id: str, sim, interval_ms: int):
 
 
 @router.get("/simulation/{sim_id}/current")
-async def get_current(sim_id: str, request: Request):
+async def get_current(sim_id: str, request: Request) -> dict[str, Any]:
     storage = _get_storage(request)
     sim_info = await storage.get_simulation(sim_id)
     if not sim_info:
@@ -103,7 +109,9 @@ async def get_current(sim_id: str, request: Request):
 
 
 @router.get("/simulation/{sim_id}/history")
-async def get_history(sim_id: str, request: Request, limit: int = 100, offset: int = 0):
+async def get_history(
+    sim_id: str, request: Request, limit: int = 100, offset: int = 0
+) -> dict[str, Any]:
     storage = _get_storage(request)
     sim_info = await storage.get_simulation(sim_id)
     if not sim_info:
@@ -114,7 +122,7 @@ async def get_history(sim_id: str, request: Request, limit: int = 100, offset: i
 
 
 @router.post("/simulation/{sim_id}/stop")
-async def stop_simulation(sim_id: str, request: Request):
+async def stop_simulation(sim_id: str, request: Request) -> dict[str, Any]:
     storage = _get_storage(request)
     sim_info = await storage.get_simulation(sim_id)
     if not sim_info:
@@ -137,7 +145,9 @@ async def stop_simulation(sim_id: str, request: Request):
 
 
 @router.patch("/simulation/{sim_id}/parameters")
-async def update_parameters(sim_id: str, body: ParameterUpdateRequest, request: Request):
+async def update_parameters(
+    sim_id: str, body: ParameterUpdateRequest, request: Request
+) -> dict[str, Any]:
     storage = _get_storage(request)
     sim_info = await storage.get_simulation(sim_id)
     if not sim_info:
@@ -156,7 +166,7 @@ async def update_parameters(sim_id: str, body: ParameterUpdateRequest, request: 
 
 
 @router.post("/simulation/{sim_id}/fault")
-async def inject_fault(sim_id: str, body: FaultRequest, request: Request):
+async def inject_fault(sim_id: str, body: FaultRequest, request: Request) -> dict[str, str]:
     active_sims = _get_active_sims(request)
     sim = active_sims.get(sim_id)
     if not sim:

@@ -3,22 +3,24 @@ import io
 import json
 import time
 import uuid
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
 from app.models.dataset import DatasetStatus, GenerateDatasetRequest
 from app.simulators import get_simulator_class
+from app.storage.base import BaseStorage
 
 router = APIRouter(tags=["datasets"])
 
 
-def _get_storage(request: Request):
-    return request.app.state.storage
+def _get_storage(request: Request) -> BaseStorage:
+    return request.app.state.storage  # type: ignore[no-any-return]
 
 
 @router.post("/datasets/generate")
-async def generate_dataset(body: GenerateDatasetRequest, request: Request):
+async def generate_dataset(body: GenerateDatasetRequest, request: Request) -> dict[str, Any]:
     cls = get_simulator_class(body.process_type)
     if cls is None:
         raise HTTPException(status_code=400, detail=f"Unknown process type: {body.process_type}")
@@ -50,13 +52,13 @@ async def generate_dataset(body: GenerateDatasetRequest, request: Request):
 
 
 @router.get("/datasets")
-async def list_datasets(request: Request):
+async def list_datasets(request: Request) -> list[dict[str, Any]]:
     storage = _get_storage(request)
     return await storage.list_datasets()
 
 
 @router.get("/datasets/{dataset_id}/status")
-async def get_dataset_status(dataset_id: str, request: Request):
+async def get_dataset_status(dataset_id: str, request: Request) -> dict[str, Any]:
     storage = _get_storage(request)
     info = await storage.get_dataset(dataset_id)
     if not info:
@@ -65,7 +67,9 @@ async def get_dataset_status(dataset_id: str, request: Request):
 
 
 @router.get("/datasets/{dataset_id}/download")
-async def download_dataset(dataset_id: str, request: Request, format: str = "csv"):
+async def download_dataset(
+    dataset_id: str, request: Request, format: str = "csv"
+) -> StreamingResponse:
     storage = _get_storage(request)
     info = await storage.get_dataset(dataset_id)
     if not info:
@@ -98,7 +102,7 @@ async def download_dataset(dataset_id: str, request: Request, format: str = "csv
 
 
 @router.delete("/datasets/{dataset_id}")
-async def delete_dataset(dataset_id: str, request: Request):
+async def delete_dataset(dataset_id: str, request: Request) -> dict[str, str]:
     storage = _get_storage(request)
     deleted = await storage.delete_dataset(dataset_id)
     if not deleted:
