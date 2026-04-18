@@ -26,7 +26,7 @@ type-check:
 	cd frontend && pnpm exec tsc --noEmit
 
 build:
-	podman build -f deploy/Containerfile -t industrial-datagen:latest .
+	podman build -f deploy/Containerfile -t quay.io/iesc/industrial-datagen:latest .
 
 clean:
 	find backend -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
