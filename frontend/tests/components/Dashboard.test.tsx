@@ -20,6 +20,26 @@ vi.mock('../../src/hooks/useSimulation', () => ({
   }),
 }));
 
+vi.mock('../../src/hooks/useRTSPStream', () => ({
+  useRTSPStream: () => ({
+    configs: {
+      refinery: { url: null, status: 'offline' },
+      chemical: { url: null, status: 'offline' },
+      pulp: { url: null, status: 'offline' },
+      pharma: { url: null, status: 'offline' },
+      rotating: { url: null, status: 'offline' },
+    },
+    setUrl: vi.fn(),
+    startStream: vi.fn(),
+    stopStream: vi.fn(),
+    loadConfig: vi.fn(),
+  }),
+}));
+
+vi.mock('../../src/services/api', () => ({
+  getRTSPStreamUrl: (pt: string) => `/api/rtsp/${pt}/stream.m3u8`,
+}));
+
 describe('Dashboard', () => {
   it('renders the simulation dashboard title', () => {
     render(<Dashboard />);
@@ -28,16 +48,16 @@ describe('Dashboard', () => {
 
   it('renders process selector with all 5 types', () => {
     render(<Dashboard />);
-    expect(screen.getByText('Refinery Distillation')).toBeInTheDocument();
-    expect(screen.getByText('Chemical Reactor')).toBeInTheDocument();
-    expect(screen.getByText('Pulp Digester')).toBeInTheDocument();
-    expect(screen.getByText('Pharma Reactor')).toBeInTheDocument();
-    expect(screen.getByText('Rotating Equipment')).toBeInTheDocument();
+    expect(screen.getAllByText('Refinery Distillation').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Chemical Reactor').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Pulp Digester').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Pharma Reactor').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Rotating Equipment').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders simulation controls', () => {
     render(<Dashboard />);
-    expect(screen.getByText('Start')).toBeInTheDocument();
+    expect(screen.getAllByText('Start').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Reset')).toBeInTheDocument();
     expect(screen.getByText('Backend Mode')).toBeInTheDocument();
   });

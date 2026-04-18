@@ -6,7 +6,9 @@ import type {
   HealthInfo,
   ProcessSchema,
   ProcessType,
+  RTSPConfigMap,
   SimulationInfo,
+  StreamStatus,
 } from '../types';
 
 const client = axios.create({
@@ -117,4 +119,31 @@ export function getDatasetDownloadUrl(datasetId: string, format = 'csv'): string
 
 export async function deleteDataset(datasetId: string): Promise<void> {
   await client.delete(`/datasets/${datasetId}`);
+}
+
+export async function getRTSPConfig(): Promise<RTSPConfigMap> {
+  const { data } = await client.get('/rtsp/config');
+  return data;
+}
+
+export async function setRTSPUrl(processType: ProcessType, url: string | null): Promise<void> {
+  await client.put(`/rtsp/config/${processType}`, { url });
+}
+
+export async function startRTSPStream(
+  processType: ProcessType,
+): Promise<{ processType: string; status: StreamStatus }> {
+  const { data } = await client.post(`/rtsp/${processType}/start`);
+  return data;
+}
+
+export async function stopRTSPStream(
+  processType: ProcessType,
+): Promise<{ processType: string; status: string }> {
+  const { data } = await client.post(`/rtsp/${processType}/stop`);
+  return data;
+}
+
+export function getRTSPStreamUrl(processType: ProcessType): string {
+  return `/api/rtsp/${processType}/stream.m3u8`;
 }
