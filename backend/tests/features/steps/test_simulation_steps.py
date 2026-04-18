@@ -1,5 +1,6 @@
 import math
 
+import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 
 from app.simulators.chemical import ChemicalSimulator

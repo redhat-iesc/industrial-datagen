@@ -6,7 +6,6 @@ from pytest_bdd.parsers import parse
 
 from app.simulators import SIMULATOR_REGISTRY
 
-
 # --- Scenarios ---
 
 @scenario("dataset_generation.feature", "Generate dataset with correct row count")
