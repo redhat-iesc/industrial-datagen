@@ -54,6 +54,13 @@ deploy/           Deployment configs
 - **No CRA:** Use Vite for frontend build tooling.
 - **Storage abstraction:** All data access goes through `storage/base.py` interface. Default is in-memory; PostgreSQL is opt-in via config.
 
+## Git
+
+- **Conventional Commits:** All commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) spec (`feat:`, `fix:`, `test:`, `chore:`, `docs:`, `refactor:`, `ci:`, etc.).
+- **Incremental commits:** Make small, logical commits — one concern per commit. Do not batch unrelated changes.
+- **Tests required:** All tests must pass before committing. Run `make test-frontend` / `make test-backend` to verify.
+- **No force-push to main:** Never force-push to the main branch.
+
 ## Simulators
 
 Five physics-based industrial process simulators:
