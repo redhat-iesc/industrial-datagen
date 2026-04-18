@@ -86,7 +86,7 @@ export default function Dashboard() {
           )}
           <StackItem>
             <Grid hasGutter>
-              <GridItem span={8}>
+              <GridItem span={9}>
                 <Stack hasGutter>
                   <StackItem>
                     <LiveChart data={sim.data} title="Process Trend Analysis" />
@@ -96,7 +96,7 @@ export default function Dashboard() {
                   </StackItem>
                 </Stack>
               </GridItem>
-              <GridItem span={4}>
+              <GridItem span={3}>
                 <Stack hasGutter>
                   <StackItem>
                     <ParameterPanel
