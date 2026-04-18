@@ -1,0 +1,49 @@
+flowchart LR
+    subgraph Now["Current State"]
+        direction TB
+        A1[5 Physics Simulators]
+        A2[In-Memory Storage]
+        A3[Rotating Equip Faults]
+        A4[PatternFly Dashboard]
+        A5[Dataset Export CSV/JSON]
+    end
+
+    subgraph P1["Phase 1\nData Foundation"]
+        direction TB
+        B1[TimescaleDB Backend]
+        B2[OEE KPI Engine]
+        B3[All-Simulator Faults]
+        B4[Historical Replay]
+    end
+
+    subgraph P2["Phase 2\nIndustrial Connectivity"]
+        direction TB
+        C1[MQTT Sparkplug B]
+        C2[OPC UA + GDS]
+        C3[Modbus TCP/RTU]
+        C4[Protocol Abstraction]
+    end
+
+    subgraph P3["Phase 3\nAnalytics & AI"]
+        direction TB
+        D1[Predictive Maint ML]
+        D2[Causal AI / RCA]
+        D3[Grafana + OEE Dash]
+        D4[OpenShift AI Serving]
+    end
+
+    subgraph P4["Phase 4\nOT Assistant"]
+        direction TB
+        E1[MCP Wrappers]
+        E2[Atomic Prompts]
+        E3[Asset Management]
+        E4[Turnkey Platform]
+    end
+
+    Now -->|"M1"| P1 -->|"M2"| P2 -->|"M3"| P3 -->|"M4"| P4
+
+    style Now fill:#ff660015,stroke:#ff6600
+    style P1 fill:#0066cc15,stroke:#0066cc
+    style P2 fill:#0066cc15,stroke:#0066cc
+    style P3 fill:#0066cc15,stroke:#0066cc
+    style P4 fill:#cc000015,stroke:#cc0000

@@ -1,0 +1,36 @@
+gantt
+    title OT Assistant Roadmap — RFC Alignment
+    dateFormat YYYY-MM-DD
+    axisFormat %b %Y
+
+    section Phase 1: Data Foundation
+        TimescaleDB storage implementation       :p1a, 2026-05-01, 3w
+        Alembic migrations & schema              :p1b, after p1a, 1w
+        Dataset persistence & replay             :p1c, after p1b, 2w
+        OEE KPI calculation engine               :p1d, 2026-05-01, 3w
+        Anomaly injection for all simulators      :p1e, after p1d, 2w
+
+    section Phase 2: Industrial Connectivity
+        MQTT Sparkplug B broker integration      :p2a, 2026-06-16, 3w
+        OPC UA client + GDS discovery            :p2b, after p2a, 4w
+        Modbus TCP/RTU adapter                   :p2c, after p2a, 3w
+        Protocol abstraction layer               :p2d, after p2b, 2w
+
+    section Phase 3: Analytics & AI
+        Predictive maintenance ML pipeline       :p3a, 2026-08-18, 3w
+        Causal AI / root cause analysis          :p3b, after p3a, 4w
+        OEE Grafana dashboard                    :p3c, 2026-08-18, 2w
+        OpenShift AI model serving               :p3d, after p3a, 3w
+
+    section Phase 4: OT Assistant
+        MCP wrapper framework                    :p4a, 2026-10-19, 3w
+        Atomic prompt engine                     :p4b, after p4a, 2w
+        Token cost optimization                  :p4c, after p4b, 2w
+        Asset registry & work orders             :p4d, 2026-10-19, 4w
+        Turnkey OT assistant integration         :p4e, after p4c, 3w
+
+    section Milestones
+        M1 — Persistent simulations              :milestone, m1, 2026-06-13, 0d
+        M2 — Live device ingestion               :milestone, m2, 2026-08-14, 0d
+        M3 — AI-powered analytics                :milestone, m3, 2026-10-16, 0d
+        M4 — Turnkey OT assistant                :milestone, m4, 2026-12-12, 0d

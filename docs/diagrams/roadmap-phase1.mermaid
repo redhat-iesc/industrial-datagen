@@ -1,0 +1,41 @@
+flowchart TB
+    subgraph Phase1["Phase 1: Data Foundation"]
+        direction TB
+
+        subgraph Storage["Milestone: Persistent Storage"]
+            PG["Implement PostgreSQLStorage\n(asyncpg + SQLAlchemy)"]
+            MIG["Alembic migration framework\n+ initial schema"]
+            REPLAY["Dataset persistence\n& historical replay"]
+            PG --> MIG --> REPLAY
+        end
+
+        subgraph Analytics["Milestone: Core Analytics"]
+            OEE["OEE calculation engine\nAvailability x Performance x Quality"]
+            ANOMALY["Extend anomaly injection\nto all 5 simulators"]
+            OEE --> ANOMALY
+        end
+    end
+
+    subgraph Current["Current State"]
+        MEM[(In-Memory Storage)]
+        ROT_FAULT[Rotating Equipment\nFault Injection Only]
+        SIM_EFF[Per-Simulator\nEfficiency Metrics]
+    end
+
+    subgraph M1["Milestone 1 Deliverables"]
+        TSDB[(TimescaleDB\nTime-Series Storage)]
+        ALL_FAULT[All Simulators\nFault Injection]
+        OEE_KPI[OEE KPI\nFramework]
+    end
+
+    MEM -.->|"replace"| PG
+    ROT_FAULT -.->|"extend"| ANOMALY
+    SIM_EFF -.->|"aggregate"| OEE
+
+    REPLAY --> TSDB
+    ANOMALY --> ALL_FAULT
+    OEE --> OEE_KPI
+
+    style Phase1 fill:#0066cc15,stroke:#0066cc
+    style Current fill:#ff660015,stroke:#ff6600
+    style M1 fill:#00993315,stroke:#009933

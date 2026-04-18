@@ -1,0 +1,59 @@
+flowchart TB
+    subgraph Phase3["Phase 3: Analytics & AI"]
+        direction TB
+
+        subgraph ML["Predictive Maintenance ML"]
+            FEAT["Feature engineering\nfrom time-series data"]
+            TRAIN["Model training pipeline\n(scikit-learn / PyTorch)"]
+            INFER["Inference endpoint\nreal-time predictions"]
+            FEAT --> TRAIN --> INFER
+        end
+
+        subgraph Causal["Causal AI / RCA"]
+            DAG["Causal DAG construction\nfrom multivariate signals"]
+            COUNTER["Counterfactual analysis\n(DoWhy / CausalNex)"]
+            RCA["Root Cause Analysis\nexplanation engine"]
+            DAG --> COUNTER --> RCA
+        end
+
+        subgraph Dashboards["Observability"]
+            GRAF["Grafana datasource plugin\nfor TimescaleDB"]
+            OEE_DASH["OEE dashboard\nAvailability / Performance / Quality"]
+            ALERTS["Alert rules\nthreshold + ML-based"]
+            GRAF --> OEE_DASH --> ALERTS
+        end
+
+        subgraph ModelServing["OpenShift AI"]
+            OSAI["Model serving on\nOpenShift AI (KServe)"]
+            REG["Model registry\n& versioning"]
+            MONITOR["Model drift\nmonitoring"]
+            OSAI --> REG --> MONITOR
+        end
+    end
+
+    subgraph M2_Out["From Phase 2"]
+        TSDB[(TimescaleDB\nHistorical Data)]
+        LIVE[Live Device\nIngestion]
+        DEVS[Device\nRegistry]
+    end
+
+    subgraph M3["Milestone 3 Deliverables"]
+        PRED["Predictive\nMaintenance Alerts"]
+        ROOT["Automated Root\nCause Reports"]
+        DASH["OEE + Grafana\nDashboards"]
+        SERVED["Hosted ML\nModels"]
+    end
+
+    TSDB -.-> FEAT
+    TSDB -.-> DAG
+    TSDB -.-> GRAF
+    LIVE -.-> INFER
+
+    INFER --> PRED
+    RCA --> ROOT
+    OEE_DASH --> DASH
+    OSAI --> SERVED
+
+    style Phase3 fill:#0066cc15,stroke:#0066cc
+    style M2_Out fill:#00993315,stroke:#009933
+    style M3 fill:#00993315,stroke:#009933

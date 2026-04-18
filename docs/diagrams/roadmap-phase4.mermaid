@@ -1,0 +1,60 @@
+flowchart TB
+    subgraph Phase4["Phase 4: Turnkey OT Assistant"]
+        direction TB
+
+        subgraph MCP_Work["MCP Integration"]
+            WRAP["MCP wrapper framework\nfor industrial tools"]
+            TOOLS["Tool definitions\nhistorian / SCADA / assets"]
+            CONTEXT["Context routing\nper-tool token budgets"]
+            WRAP --> TOOLS --> CONTEXT
+        end
+
+        subgraph Prompts["Context Management"]
+            ATOMIC["Atomic prompt engine\ndecompose complex queries"]
+            SEQUENCE["Mermaid sequence diagrams\nas execution plans"]
+            TOKEN["Token cost optimizer\ncaching + compaction"]
+            ATOMIC --> SEQUENCE --> TOKEN
+        end
+
+        subgraph Assets["Asset Management"]
+            AREG["Asset registry\nequipment hierarchy"]
+            WO["Work order engine\nmaintenance scheduling"]
+            WORKFORCE["Workforce allocation\nskill-based routing"]
+            AREG --> WO --> WORKFORCE
+        end
+
+        subgraph Integration["OT Assistant Core"]
+            ORCHESTRATE["Multi-tool orchestration\nquery → plan → execute"]
+            EXPLAIN["Natural language\nexplanations & reports"]
+            FEEDBACK["Human-in-the-loop\nconfirmation & learning"]
+            ORCHESTRATE --> EXPLAIN --> FEEDBACK
+        end
+    end
+
+    subgraph M3_Out["From Phase 3"]
+        PRED[Predictive\nMaintenance]
+        RCA[Root Cause\nAnalysis]
+        DASH[OEE\nDashboards]
+        MODELS[Hosted ML\nModels]
+    end
+
+    subgraph M4["Milestone 4: Turnkey OT Assistant"]
+        NL["Natural Language\nOT Queries"]
+        AUTO["Automated\nMaintenance Scheduling"]
+        INSIGHT["AI-Driven\nOperational Insights"]
+        GLUE["Middleware Glue\nUnified OT Platform"]
+    end
+
+    PRED -.-> TOOLS
+    RCA -.-> TOOLS
+    DASH -.-> TOOLS
+    MODELS -.-> ORCHESTRATE
+
+    CONTEXT --> NL
+    WO --> AUTO
+    FEEDBACK --> INSIGHT
+    ORCHESTRATE --> GLUE
+
+    style Phase4 fill:#0066cc15,stroke:#0066cc
+    style M3_Out fill:#00993315,stroke:#009933
+    style M4 fill:#cc000015,stroke:#cc0000
