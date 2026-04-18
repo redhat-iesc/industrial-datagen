@@ -48,8 +48,16 @@ export function useRTSPStream() {
   );
 
   useEffect(() => {
-    loadConfig();
-  }, [loadConfig]);
+    let cancelled = false;
+    getRTSPConfig()
+      .then((data) => {
+        if (!cancelled) setConfigs(data);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const hasStarting = Object.values(configs).some((c) => c.status === 'starting');
