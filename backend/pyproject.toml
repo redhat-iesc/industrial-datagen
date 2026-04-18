@@ -5,7 +5,8 @@ description = "Industrial process simulation platform for AI/ML dataset generati
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115",
-    "uvicorn[standard]>=0.34",
+    "uvicorn>=0.34",
+    "websockets>=14.0",
     "pydantic>=2.10",
     "pydantic-settings>=2.7",
     "python-multipart>=0.0.18",
