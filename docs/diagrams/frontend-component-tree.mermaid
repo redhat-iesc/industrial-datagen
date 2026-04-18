@@ -1,0 +1,40 @@
+graph TD
+    App["App.tsx<br/>BrowserRouter + Page Layout"]
+
+    App --> Nav["PatternFly Nav<br/>Dashboard | Datasets"]
+    App --> Dashboard["Dashboard.tsx"]
+    App --> Datasets["Datasets.tsx"]
+
+    Dashboard --> ProcessSelector["ProcessSelector<br/>Dropdown: 5 process types"]
+    Dashboard --> SimControls["SimulationControls<br/>Start / Stop / Reset + Backend Toggle"]
+    Dashboard --> LiveChart["LiveChart<br/>Victory line charts<br/>8-column grid"]
+    Dashboard --> StatsPanel["StatisticsPanel<br/>Mean / Min / Max / StdDev"]
+    Dashboard --> ParamPanel["ParameterPanel<br/>Slider controls per process"]
+    Dashboard --> AnomalyPanel["AnomalyPanel<br/>Fault buttons<br/>rotating equipment only"]
+
+    Datasets --> DatasetMgr["DatasetManager<br/>Generate / Download / Delete"]
+
+    subgraph Hooks["Custom Hooks"]
+        useSim["useSimulation()<br/>Core state machine"]
+        useDS["useDataset()<br/>CRUD operations"]
+    end
+
+    subgraph Services["Services"]
+        APIClient["api.ts<br/>Axios REST client"]
+        SSE["websocket.ts<br/>SSE EventSource"]
+    end
+
+    subgraph ClientSim["Client-Side Simulators"]
+        BaseSim["BaseSimulator"]
+        Factory["createSimulator()"]
+        TSEngines["5 TypeScript engines<br/>mirror Python physics"]
+    end
+
+    Dashboard --> useSim
+    Datasets --> useDS
+    useSim --> APIClient
+    useSim --> SSE
+    useSim --> Factory
+    useDS --> APIClient
+    Factory --> BaseSim
+    BaseSim --> TSEngines

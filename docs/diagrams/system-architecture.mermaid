@@ -1,0 +1,50 @@
+graph TB
+    subgraph Browser["Browser (React 19 + PatternFly v6)"]
+        UI[UI Components]
+        LocalSim[Client-Side Simulators]
+        Hooks[React Hooks]
+        APIClient[Axios API Client]
+        SSEClient[SSE EventSource]
+
+        UI --> Hooks
+        Hooks --> LocalSim
+        Hooks --> APIClient
+        Hooks --> SSEClient
+    end
+
+    subgraph Backend["FastAPI Backend (Python 3.12)"]
+        CORS[CORS Middleware]
+        Routes[API Routers]
+        SimEngines[Simulator Engines]
+        Storage[Storage Layer]
+        TaskRunner[asyncio Task Runner]
+
+        CORS --> Routes
+        Routes --> SimEngines
+        Routes --> Storage
+        Routes --> TaskRunner
+        TaskRunner --> SimEngines
+        TaskRunner --> Storage
+    end
+
+    subgraph Persistence["Storage Backends"]
+        MemStore[(In-Memory Dict)]
+        PGStore[(PostgreSQL / TimescaleDB)]
+    end
+
+    subgraph Deploy["Deployment Targets"]
+        Container[OCI Container]
+        OpenShift[OpenShift / K8s]
+        BootC[bootc Immutable OS]
+    end
+
+    APIClient -- "HTTP REST /api/*" --> CORS
+    SSEClient -- "SSE /api/simulation/:id/feed" --> Routes
+    Browser -- "WebSocket /api/ws/simulation/:id" --> Routes
+
+    Storage --> MemStore
+    Storage -.-> PGStore
+
+    Backend --> Container
+    Container --> OpenShift
+    Container --> BootC

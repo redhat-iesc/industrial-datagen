@@ -1,0 +1,42 @@
+graph BT
+    subgraph E2E["E2E Tests (Playwright)"]
+        SimE2E["simulation.spec.ts<br/>Full simulation lifecycle"]
+        DSE2E["dataset.spec.ts<br/>Generate + download flow"]
+    end
+
+    subgraph Integration["Integration Tests (pytest + httpx)"]
+        APIHealth["test_api_health.py"]
+        APIProc["test_api_processes.py"]
+        APISim["test_api_simulations.py"]
+        APIDS["test_api_datasets.py"]
+    end
+
+    subgraph BDD["BDD Feature Tests (pytest-bdd)"]
+        SimFeature["simulation steps"]
+        DSFeature["dataset steps"]
+        AnomalyFeature["anomaly steps"]
+    end
+
+    subgraph Component["Component Tests (Vitest + RTL)"]
+        ProcSel["ProcessSelector.test.tsx"]
+        SimCtrl["SimulationControls.test.tsx"]
+        ParamP["ParameterPanel.test.tsx"]
+        LiveC["LiveChart.test.tsx"]
+        StatsP["StatisticsPanel.test.tsx"]
+        AnoP["AnomalyPanel.test.tsx"]
+        DSMgr["DatasetManager.test.tsx"]
+        DashP["Dashboard.test.tsx"]
+        DSPage["Datasets.test.tsx"]
+        AppT["App.test.tsx"]
+    end
+
+    subgraph Unit["Unit Tests"]
+        direction LR
+        PySim["Python Simulators<br/>test_refinery.py<br/>test_chemical.py<br/>test_pulp.py<br/>test_pharma.py<br/>test_rotating.py"]
+        TSSim["TS Simulators<br/>refinery.test.ts<br/>chemical.test.ts<br/>pulp.test.ts<br/>pharma.test.ts<br/>rotating.test.ts<br/>base.test.ts"]
+    end
+
+    Unit --> Component
+    Component --> BDD
+    BDD --> Integration
+    Integration --> E2E

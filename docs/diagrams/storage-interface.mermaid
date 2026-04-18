@@ -1,0 +1,38 @@
+classDiagram
+    class BaseStorage {
+        <<abstract>>
+        +save_simulation(sim_id, data)*
+        +get_simulation(sim_id)* dict | None
+        +list_simulations()* list~dict~
+        +delete_simulation(sim_id)* bool
+        +append_simulation_data(sim_id, row)*
+        +get_simulation_history(sim_id, limit, offset)* list~dict~
+        +get_simulation_latest(sim_id)* dict | None
+        +save_dataset(dataset_id, data)*
+        +get_dataset(dataset_id)* dict | None
+        +list_datasets()* list~dict~
+        +delete_dataset(dataset_id)* bool
+        +save_dataset_rows(dataset_id, rows)*
+        +get_dataset_rows(dataset_id)* list~dict~
+    }
+
+    class MemoryStorage {
+        -_simulations: dict
+        -_simulation_data: dict
+        -_datasets: dict
+        -_dataset_rows: dict
+        All async-compatible
+    }
+
+    class PostgreSQLStorage {
+        <<planned>>
+        -_engine: AsyncEngine
+        -_session: AsyncSession
+        asyncpg + SQLAlchemy
+    }
+
+    BaseStorage <|-- MemoryStorage : implements
+    BaseStorage <|.. PostgreSQLStorage : planned
+
+    note for MemoryStorage "Default backend\nNo external dependencies\nData lost on restart"
+    note for PostgreSQLStorage "Optional via INDGEN_STORAGE_BACKEND=postgres\nRequires INDGEN_DATABASE_URL"

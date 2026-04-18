@@ -1,0 +1,39 @@
+flowchart LR
+    subgraph Input["User Input"]
+        Params[Process Parameters]
+        PType[Process Type Selection]
+        Faults[Fault Injection]
+    end
+
+    subgraph Simulation["Simulation Engine"]
+        Step["step() → DataPoint"]
+        Physics["Physics Model<br/>Kinetics / Thermodynamics"]
+        Noise["Gaussian Noise"]
+        State["Internal State<br/>timeStep, accumulators"]
+    end
+
+    subgraph Output["Data Output"]
+        Live["Live Stream<br/>SSE / WebSocket"]
+        History["Historical Data<br/>GET /history"]
+        Dataset["Bulk Dataset<br/>CSV / JSON"]
+    end
+
+    subgraph Storage["Storage Layer"]
+        SimData["Simulation Data<br/>append_simulation_data()"]
+        DatasetRows["Dataset Rows<br/>save_dataset_rows()"]
+    end
+
+    Params --> Step
+    PType --> Step
+    Faults --> Step
+    Step --> Physics
+    Physics --> Noise
+    Noise --> State
+    State --> Step
+
+    Step --> SimData
+    SimData --> Live
+    SimData --> History
+
+    Step -- "generate_dataset()" --> DatasetRows
+    DatasetRows --> Dataset

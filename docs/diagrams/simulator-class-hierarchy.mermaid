@@ -1,0 +1,72 @@
+classDiagram
+    class BaseSimulator {
+        <<abstract>>
+        +name: str
+        +description: str
+        +parameters: dict
+        +state: dict
+        +parameter_defs()* list~ParameterDef~
+        +output_fields()* list~OutputField~
+        +step()* dict
+        +reset() void
+        +get_schema() dict
+        +generate_dataset(samples, include_anomalies) list~dict~
+        #_anomaly_rate() float
+        #_normal_params(index)* dict
+        #_anomaly_params(index)* dict
+        #_noise(scale) float
+        #_gaussian(mean, std) float
+    }
+
+    class ParameterDef {
+        +name: str
+        +min_val: float
+        +max_val: float
+        +default: float
+        +unit: str
+    }
+
+    class OutputField {
+        +name: str
+        +unit: str
+        +description: str
+    }
+
+    class RefinerySimulator {
+        +name = "Refinery"
+        4 parameters, 17 outputs
+        Crude oil atmospheric distillation
+    }
+
+    class ChemicalSimulator {
+        +name = "Chemical Reactor"
+        6 parameters, 17 outputs
+        CSTR continuous reactor
+    }
+
+    class PulpSimulator {
+        +name = "Pulp and Paper"
+        6 parameters, 25 outputs
+        Kraft digester process
+    }
+
+    class PharmaSimulator {
+        +name = "Pharmaceutical"
+        7 parameters, 26 outputs
+        GMP batch reactor
+    }
+
+    class RotatingEquipmentSimulator {
+        +name = "Rotating Equipment"
+        6 parameters, 20 outputs
+        +inject_fault(fault_type) void
+        Predictive maintenance with WPD
+    }
+
+    BaseSimulator <|-- RefinerySimulator
+    BaseSimulator <|-- ChemicalSimulator
+    BaseSimulator <|-- PulpSimulator
+    BaseSimulator <|-- PharmaSimulator
+    BaseSimulator <|-- RotatingEquipmentSimulator
+    BaseSimulator --> ParameterDef : defines
+    BaseSimulator --> OutputField : produces

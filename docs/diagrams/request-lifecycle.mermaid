@@ -1,0 +1,36 @@
+sequenceDiagram
+    participant U as User Browser
+    participant V as Vite Dev / Static
+    participant F as FastAPI
+    participant S as Simulator Engine
+    participant ST as Storage Layer
+
+    Note over U,ST: Simulation Start Flow
+    U->>V: Click Start (backend mode)
+    V->>F: POST /api/simulation/start
+    F->>S: Instantiate simulator(params)
+    F->>ST: save_simulation(id, info)
+    F->>F: asyncio.create_task(_run_simulation)
+    F-->>U: SimulationInfo {id, status: running}
+
+    Note over U,ST: Real-time Data Streaming (SSE)
+    U->>F: GET /api/simulation/{id}/feed
+    loop Every 500ms
+        F->>ST: get_simulation_latest(id)
+        ST-->>F: DataPoint
+        F-->>U: SSE data: {timestamp, fields...}
+    end
+
+    Note over U,ST: Background Simulation Loop
+    loop Every intervalMs
+        F->>S: sim.step()
+        S-->>F: DataPoint row
+        F->>ST: append_simulation_data(id, row)
+        F->>ST: save_simulation(id, updated info)
+    end
+
+    Note over U,ST: Simulation Stop
+    U->>F: POST /api/simulation/{id}/stop
+    F->>F: task.cancel()
+    F->>ST: save_simulation(id, status: stopped)
+    F-->>U: SimulationInfo {status: stopped}

@@ -1,0 +1,45 @@
+graph TB
+    subgraph Dev["Development (Local)"]
+        ViteDev["Vite Dev Server<br/>:5173"]
+        UvicornDev["Uvicorn --reload<br/>:8000"]
+        ViteDev -- "proxy /api, /ws" --> UvicornDev
+    end
+
+    subgraph Container["OCI Container (Production)"]
+        direction TB
+        StaticFiles["Static Files<br/>/app/static (React build)"]
+        Uvicorn["Uvicorn<br/>:8000"]
+        Uvicorn -- "serves SPA" --> StaticFiles
+    end
+
+    subgraph Compose["Docker Compose"]
+        AppSvc["app service<br/>Production build"]
+        DevBE["app-dev-backend<br/>Python + reload"]
+        DevFE["app-dev-frontend<br/>Node + Vite"]
+        PG["postgres<br/>TimescaleDB pg16"]
+        DevFE --> DevBE
+        AppSvc -.-> PG
+    end
+
+    subgraph OCP["OpenShift"]
+        Route["Route<br/>TLS edge termination"]
+        Service["Service<br/>ClusterIP :8000"]
+        Deployment["Deployment<br/>1 replica"]
+        ConfigMap["ConfigMap<br/>INDGEN_* env vars"]
+        Route --> Service
+        Service --> Deployment
+        ConfigMap --> Deployment
+    end
+
+    subgraph BootC["bootc (Immutable OS)"]
+        Nginx["nginx<br/>:80 → static"]
+        SystemdBE["systemd: indgen-backend<br/>uvicorn :8000"]
+        SystemdFE["systemd: indgen-frontend<br/>static build"]
+        QCOW2["QCOW2 Disk Image"]
+        Nginx --> SystemdBE
+        Nginx --> SystemdFE
+    end
+
+    Container --> Compose
+    Container --> OCP
+    Container --> BootC
