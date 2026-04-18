@@ -1,0 +1,12 @@
+[Unit]
+Description=Industrial Datagen - Wait for nginx before marking ready
+After=nginx.service
+Requires=nginx.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/echo "Frontend served by nginx from /usr/share/indgen/static"
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

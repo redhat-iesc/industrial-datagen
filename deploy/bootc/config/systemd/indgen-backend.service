@@ -1,0 +1,26 @@
+[Unit]
+Description=Industrial Datagen - Backend API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=otoperator
+WorkingDirectory=/usr/share/indgen/backend
+ExecStart=/usr/bin/python3.12 -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=indgen-backend
+
+Environment=INDGEN_CORS_ORIGINS=["http://localhost"]
+Environment=INDGEN_STORAGE_BACKEND=memory
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/var/log/indgen
+
+[Install]
+WantedBy=multi-user.target

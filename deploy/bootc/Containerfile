@@ -1,0 +1,73 @@
+# =============================================================================
+# Industrial Datagen - bootc Image
+# =============================================================================
+#
+# Bootable container image shipping the Industrial Datagen platform as
+# a self-contained OS image with nginx + uvicorn managed by systemd.
+#
+# Build:
+#   ./scripts/prepare-src.sh
+#   ./scripts/build.sh
+#
+# Convert to disk image:
+#   ./scripts/convert-to-qcow2.sh
+#
+# =============================================================================
+
+FROM quay.io/centos-bootc/centos-stream-bootc:stream9
+
+LABEL org.opencontainers.image.title="Industrial Datagen (bootc)"
+LABEL org.opencontainers.image.description="Industrial process simulation platform packaged as a bootc image"
+LABEL org.opencontainers.image.version="0.1.0"
+LABEL org.opencontainers.image.vendor="Red Hat Demo"
+
+# ---------------------------------------------------------------------------
+# Install runtime dependencies
+# ---------------------------------------------------------------------------
+RUN dnf install -y \
+      nginx \
+      python3.12 \
+      python3.12-pip \
+    && dnf clean all
+
+# ---------------------------------------------------------------------------
+# Application installation
+# ---------------------------------------------------------------------------
+RUN mkdir -p /usr/share/indgen/backend \
+             /usr/share/indgen/static \
+             /var/log/indgen
+
+# Copy pre-built frontend
+COPY indgen-src/static/ /usr/share/indgen/static/
+
+# Copy backend
+COPY indgen-src/backend/ /usr/share/indgen/backend/
+
+# Install Python dependencies
+WORKDIR /usr/share/indgen/backend
+RUN python3.12 -m pip install --no-cache-dir .
+
+# ---------------------------------------------------------------------------
+# nginx - serves frontend, proxies API to uvicorn
+# ---------------------------------------------------------------------------
+COPY config/nginx/indgen.conf /etc/nginx/conf.d/indgen.conf
+RUN rm -f /etc/nginx/conf.d/default.conf
+
+# ---------------------------------------------------------------------------
+# systemd service units
+# ---------------------------------------------------------------------------
+COPY config/systemd/indgen-backend.service /usr/lib/systemd/system/indgen-backend.service
+COPY config/systemd/indgen-frontend.service /usr/lib/systemd/system/indgen-frontend.service
+
+RUN systemctl enable indgen-backend.service \
+    && systemctl enable indgen-frontend.service \
+    && systemctl enable nginx.service
+
+# ---------------------------------------------------------------------------
+# Default operator user
+# ---------------------------------------------------------------------------
+ARG OTOPERATOR_PASSWORD=changeme
+RUN useradd -m -G wheel -s /bin/bash otoperator \
+    && echo "otoperator:${OTOPERATOR_PASSWORD}" | chpasswd
+
+WORKDIR /
