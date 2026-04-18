@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  test:
-    name: Test Suite
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,29 +38,97 @@ jobs:
         working-directory: frontend
         run: pnpm install --frozen-lockfile
 
-      - name: Lint backend
+      - name: Ruff check
         working-directory: backend
         run: uv run ruff check app/ tests/
 
-      - name: Type check backend
+      - name: ESLint
+        working-directory: frontend
+        run: pnpm exec eslint .
+
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync --extra dev --extra test
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: mypy
         working-directory: backend
         run: uv run mypy app/
 
-      - name: Type check frontend
+      - name: TypeScript type check
         working-directory: frontend
         run: pnpm exec tsc --noEmit
 
-      - name: Backend tests
-        working-directory: backend
-        run: uv run pytest -v --cov=app --cov-report=term-missing
+  test-e2e:
+    name: E2E Tests
+    needs: [lint, type-check]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Frontend tests
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync --extra dev --extra test
+
+      - name: Install frontend dependencies
         working-directory: frontend
-        run: pnpm exec vitest run
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        working-directory: frontend
+        run: pnpm exec playwright test
+
+      - name: Upload test traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: frontend/test-results/
 
   release:
     name: Build & Push
-    needs: test
+    needs: test-e2e
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
