@@ -1,0 +1,31 @@
+# Stage 1: Build React frontend
+FROM node:20-alpine AS frontend-build
+WORKDIR /app
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 2: Production image
+FROM python:3.12-slim
+
+LABEL org.opencontainers.image.title="Industrial Datagen"
+LABEL org.opencontainers.image.description="Industrial process simulation platform for AI/ML dataset generation"
+LABEL org.opencontainers.image.version="0.1.0"
+LABEL org.opencontainers.image.vendor="Red Hat Demo"
+
+WORKDIR /app
+
+COPY backend/pyproject.toml ./
+RUN pip install --no-cache-dir .
+
+COPY backend/app/ ./app/
+
+COPY --from=frontend-build /app/dist ./static/
+
+ENV INDGEN_CORS_ORIGINS='["*"]'
+ENV INDGEN_STATIC_DIR=/app/static
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
