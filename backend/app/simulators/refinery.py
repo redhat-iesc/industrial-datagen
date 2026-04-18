@@ -65,7 +65,8 @@ class RefinerySimulator(BaseSimulator):
         jet_fuel_yield = feed_rate * overall_efficiency * 0.12 + self._noise(0.2)
         residual_yield = feed_rate * 0.15 + self._noise(0.15)
 
-        yield_efficiency = ((gasoline_yield + diesel_yield + jet_fuel_yield) / max(feed_rate, 0.1)) * 100
+        total_yield = gasoline_yield + diesel_yield + jet_fuel_yield
+        yield_efficiency = (total_yield / max(feed_rate, 0.1)) * 100
 
         gasoline_octane = 87 + temp_efficiency * 5 + self._noise(2)
         diesel_cetane = 45 + pressure_efficiency * 8 + self._noise(3)

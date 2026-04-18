@@ -29,7 +29,11 @@ def _get_sim_tasks(request: Request) -> dict:
 
 
 @router.get("/simulations")
-async def list_simulations(request: Request, status: str | None = None, processType: str | None = None):
+async def list_simulations(
+    request: Request,
+    status: str | None = None,
+    processType: str | None = None,  # noqa: N803
+):
     storage = _get_storage(request)
     sims = await storage.list_simulations()
     if status:

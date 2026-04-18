@@ -72,7 +72,10 @@ class ChemicalSimulator(BaseSimulator):
             mixing_eff = max(0.7, 1 - speed_delta * 0.001)
 
         base_conversion = 0.92
-        conversion_rate = base_conversion * temp_efficiency * (pressure / 25) * catalyst_activity * mixing_eff
+        conversion_rate = (
+            base_conversion * temp_efficiency * (pressure / 25)
+            * catalyst_activity * mixing_eff
+        )
 
         reactant_a_conc = p["reactantA"] * (1 - conversion_rate) + self._noise(0.4)
         reactant_b_conc = p["reactantB"] * (1 - conversion_rate) + self._noise(0.4)
