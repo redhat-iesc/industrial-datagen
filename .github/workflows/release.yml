@@ -92,11 +92,7 @@ jobs:
         id: tags
         run: |
           IMAGE="quay.io/iesc/industrial-datagen"
-          TAGS="${IMAGE}:sha-$(git rev-parse --short HEAD)"
-          TAGS="${TAGS},${IMAGE}:${{ steps.version.outputs.version }}"
-          if [[ "${{ steps.version.outputs.is_tag }}" == "true" ]]; then
-            TAGS="${TAGS},${IMAGE}:latest"
-          fi
+          TAGS="${IMAGE}:${{ steps.version.outputs.version }},${IMAGE}:latest"
           echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
