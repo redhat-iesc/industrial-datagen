@@ -1,0 +1,57 @@
+flowchart TB
+    subgraph Phase2["Phase 2: Industrial Connectivity"]
+        direction TB
+
+        subgraph MQTT_Work["MQTT Sparkplug B"]
+            BROKER["MQTT broker connector\n(Eclipse Mosquitto / HiveMQ)"]
+            SPKB["Sparkplug B payload\nencoding/decoding"]
+            STATE["Birth/Death certificates\n& state management"]
+            BROKER --> SPKB --> STATE
+        end
+
+        subgraph OPCUA_Work["OPC UA"]
+            CLIENT["OPC UA client\n(asyncua library)"]
+            GDS["Global Discovery Server\nintegration"]
+            BROWSE["Node browsing &\nsubscription management"]
+            CLIENT --> GDS --> BROWSE
+        end
+
+        subgraph Modbus_Work["Modbus"]
+            MBTCP["Modbus TCP adapter\n(pymodbus)"]
+            MBRTU["Modbus RTU adapter\n(serial devices)"]
+            REG["Register map\nconfiguration"]
+            MBTCP --> REG
+            MBRTU --> REG
+        end
+
+        subgraph Abstraction["Protocol Abstraction"]
+            PAL["Unified connector interface\nBaseProtocolAdapter"]
+            DISC["Auto-discovery &\ndevice registry"]
+            INGEST["Ingestion pipeline\n→ TimescaleDB"]
+            PAL --> DISC --> INGEST
+        end
+    end
+
+    subgraph M1_Out["From Phase 1"]
+        TSDB[(TimescaleDB)]
+        SIMDATA[Simulated\nTelemetry]
+    end
+
+    subgraph M2["Milestone 2 Deliverables"]
+        LIVE["Live Device\nIngestion"]
+        HYBRID["Hybrid Mode\nSimulated + Real Data"]
+        REGISTRY["Device\nRegistry"]
+    end
+
+    TSDB -.-> INGEST
+    SIMDATA -.->|"same pipeline"| INGEST
+
+    STATE --> LIVE
+    BROWSE --> LIVE
+    REG --> LIVE
+    INGEST --> HYBRID
+    DISC --> REGISTRY
+
+    style Phase2 fill:#0066cc15,stroke:#0066cc
+    style M1_Out fill:#00993315,stroke:#009933
+    style M2 fill:#00993315,stroke:#009933
