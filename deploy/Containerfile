@@ -1,10 +1,11 @@
 # Stage 1: Build React frontend
-FROM node:20-alpine AS frontend-build
+FROM node:22-alpine AS frontend-build
+RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm ci
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 COPY frontend/ ./
-RUN npm run build
+RUN pnpm run build
 
 # Stage 2: Production image
 FROM python:3.12-slim
@@ -14,10 +15,12 @@ LABEL org.opencontainers.image.description="Industrial process simulation platfo
 LABEL org.opencontainers.image.version="0.1.0"
 LABEL org.opencontainers.image.vendor="Red Hat Demo"
 
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
 WORKDIR /app
 
 COPY backend/pyproject.toml ./
-RUN pip install --no-cache-dir .
+RUN uv pip install --system --no-cache .
 
 COPY backend/app/ ./app/
 

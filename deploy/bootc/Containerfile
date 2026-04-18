@@ -27,8 +27,9 @@ LABEL org.opencontainers.image.vendor="Red Hat Demo"
 RUN dnf install -y \
       nginx \
       python3.12 \
-      python3.12-pip \
     && dnf clean all
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 # ---------------------------------------------------------------------------
 # Application installation
@@ -45,7 +46,7 @@ COPY indgen-src/backend/ /usr/share/indgen/backend/
 
 # Install Python dependencies
 WORKDIR /usr/share/indgen/backend
-RUN python3.12 -m pip install --no-cache-dir .
+RUN uv pip install --system --no-cache .
 
 # ---------------------------------------------------------------------------
 # nginx - serves frontend, proxies API to uvicorn

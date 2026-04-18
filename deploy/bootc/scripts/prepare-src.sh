@@ -10,8 +10,8 @@ REPO_ROOT="${PROJECT_DIR}/../.."
 
 echo "Building frontend..."
 cd "${REPO_ROOT}/frontend"
-npm ci
-npm run build
+pnpm install --frozen-lockfile
+pnpm run build
 
 echo "Copying artifacts..."
 mkdir -p "${PROJECT_DIR}/indgen-src/static"
