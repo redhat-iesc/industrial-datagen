@@ -8,8 +8,10 @@ import {
   EmptyStateBody,
   Form,
   FormGroup,
+  MenuToggle,
   NumberInput,
   Select,
+  SelectList,
   SelectOption,
   Slider,
   Stack,
@@ -52,18 +54,29 @@ export default function DatasetManager() {
                 <Select
                   id="ds-process"
                   isOpen={processSelectOpen}
-                  onToggle={(_e, val) => setProcessSelectOpen(val)}
+                  selected={processType}
                   onSelect={(_e, val) => {
                     setProcessType(val as ProcessType);
                     setProcessSelectOpen(false);
                   }}
-                  selected={processType}
+                  onOpenChange={setProcessSelectOpen}
+                  toggle={(toggleRef) => (
+                    <MenuToggle
+                      ref={toggleRef}
+                      onClick={() => setProcessSelectOpen(prev => !prev)}
+                      isExpanded={processSelectOpen}
+                    >
+                      {processType}
+                    </MenuToggle>
+                  )}
                 >
-                  {PROCESS_TYPES.map(pt => (
-                    <SelectOption key={pt} value={pt}>
-                      {pt}
-                    </SelectOption>
-                  ))}
+                  <SelectList>
+                    {PROCESS_TYPES.map(pt => (
+                      <SelectOption key={pt} value={pt}>
+                        {pt}
+                      </SelectOption>
+                    ))}
+                  </SelectList>
                 </Select>
               </FormGroup>
               <FormGroup label="Samples" fieldId="ds-samples">
@@ -97,15 +110,26 @@ export default function DatasetManager() {
                 <Select
                   id="ds-format"
                   isOpen={formatSelectOpen}
-                  onToggle={(_e, val) => setFormatSelectOpen(val)}
+                  selected={format}
                   onSelect={(_e, val) => {
                     setFormat(val as string);
                     setFormatSelectOpen(false);
                   }}
-                  selected={format}
+                  onOpenChange={setFormatSelectOpen}
+                  toggle={(toggleRef) => (
+                    <MenuToggle
+                      ref={toggleRef}
+                      onClick={() => setFormatSelectOpen(prev => !prev)}
+                      isExpanded={formatSelectOpen}
+                    >
+                      {format.toUpperCase()}
+                    </MenuToggle>
+                  )}
                 >
-                  <SelectOption value="csv">CSV</SelectOption>
-                  <SelectOption value="json">JSON</SelectOption>
+                  <SelectList>
+                    <SelectOption value="csv">CSV</SelectOption>
+                    <SelectOption value="json">JSON</SelectOption>
+                  </SelectList>
                 </Select>
               </FormGroup>
               <FormGroup label="Include Anomalies" fieldId="ds-anomalies">
