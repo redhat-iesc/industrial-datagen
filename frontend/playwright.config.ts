@@ -20,13 +20,13 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'cd ../backend && source .venv/bin/activate && uvicorn app.main:app --port 8000',
+      command: 'cd ../backend && uv run uvicorn app.main:app --port 8000',
       port: 8000,
       reuseExistingServer: !process.env.CI,
       timeout: 15000,
     },
     {
-      command: 'npm run dev',
+      command: 'pnpm run dev',
       port: 5173,
       reuseExistingServer: !process.env.CI,
       timeout: 15000,
