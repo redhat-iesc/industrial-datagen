@@ -14,19 +14,26 @@ export function useSimulation() {
   const [data, setData] = useState<DataPoint[]>([]);
   const [backendMode, setBackendMode] = useState(false);
   const [simInfo, setSimInfo] = useState<SimulationInfo | null>(null);
-  const [parameters, setParameters] = useState<Record<string, number>>({});
+  const [simulator, setSimulator] = useState<BaseSimulator>(() => createSimulator(selectedProcess));
+  const [parameters, setParameters] = useState<Record<string, number>>(() => ({ ...createSimulator(selectedProcess).parameters }));
 
-  const simulatorRef = useRef<BaseSimulator | null>(null);
+  const simulatorRef = useRef<BaseSimulator>(simulator);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
+  const [prevProcess, setPrevProcess] = useState(selectedProcess);
 
-  useEffect(() => {
+  if (selectedProcess !== prevProcess) {
+    setPrevProcess(selectedProcess);
     const sim = createSimulator(selectedProcess);
-    simulatorRef.current = sim;
+    setSimulator(sim);
     setParameters({ ...sim.parameters });
     setData([]);
     setIsRunning(false);
-  }, [selectedProcess]);
+  }
+
+  useEffect(() => {
+    simulatorRef.current = simulator;
+  }, [simulator]);
 
   const updateParameter = useCallback((name: string, value: number) => {
     setParameters(prev => {
