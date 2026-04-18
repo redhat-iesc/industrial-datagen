@@ -256,8 +256,21 @@ One concern per commit. Tests must pass before committing.
 | `typescript` | Type checking |
 | `eslint` | Linting |
 
+## CI/CD
+
+GitHub Actions runs lint, type check, tests, and container build on every PR and push to main. See [CI/CD](CI_CD.md) for full details.
+
+To verify workflows locally with [act](https://github.com/nektos/act):
+
+```bash
+act -l                      # list all jobs
+act pull_request --dryrun   # validate syntax
+act push -j lint            # run a specific job
+```
+
 ## Related Documentation
 
 - [Architecture](ARCHITECTURE.md) — system design and project structure
 - [API Reference](API_REFERENCE.md) — endpoint documentation
+- [CI/CD](CI_CD.md) — GitHub Actions workflows and local verification
 - [Deployment](DEPLOYMENT.md) — container builds and infrastructure

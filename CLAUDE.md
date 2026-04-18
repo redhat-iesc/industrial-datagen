@@ -76,6 +76,7 @@ Five physics-based industrial process simulators (see [docs/SIMULATORS.md](docs/
 - [API Reference](docs/API_REFERENCE.md) — all REST, WebSocket, and SSE endpoints
 - [Simulators](docs/SIMULATORS.md) — physics models, parameters, output fields
 - [Data Model](docs/DATA_MODEL.md) — TypeScript/Pydantic types, storage contract
+- [CI/CD](docs/CI_CD.md) — GitHub Actions workflows, release process, local verification with act
 - [Development](docs/DEVELOPMENT.md) — setup, testing, code conventions, dependency list
 - [Deployment](docs/DEPLOYMENT.md) — container builds, Docker Compose, OpenShift, bootc
 - [Diagrams](docs/diagrams/) — standalone `.mermaid` source files for all architecture diagrams
