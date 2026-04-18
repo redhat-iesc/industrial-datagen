@@ -12,9 +12,11 @@ from fastapi.staticfiles import StaticFiles
 from app.api.datasets import router as datasets_router
 from app.api.health import router as health_router
 from app.api.processes import router as processes_router
+from app.api.rtsp import router as rtsp_router
 from app.api.simulations import router as simulations_router
 from app.api.statistics import router as statistics_router
 from app.api.streaming import router as streaming_router
+from app.rtsp.manager import RTSPStreamManager
 from app.config import settings
 from app.storage.memory import MemoryStorage
 
@@ -28,7 +30,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     app.state.storage = MemoryStorage()
     app.state.active_simulations = {}
     app.state.simulation_tasks = {}
+    app.state.rtsp_manager = RTSPStreamManager()
     yield
+    await app.state.rtsp_manager.stop_all()
     for task in app.state.simulation_tasks.values():
         task.cancel()
 
@@ -53,6 +57,7 @@ app.include_router(simulations_router, prefix="/api")
 app.include_router(datasets_router, prefix="/api")
 app.include_router(statistics_router, prefix="/api")
 app.include_router(streaming_router, prefix="/api")
+app.include_router(rtsp_router, prefix="/api")
 
 static_dir = os.environ.get("INDGEN_STATIC_DIR", "")
 if static_dir and Path(static_dir).is_dir():
