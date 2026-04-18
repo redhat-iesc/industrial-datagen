@@ -4,7 +4,7 @@ import { getProcesses } from '../services/api';
 
 export function useProcess() {
   const [processes, setProcesses] = useState<ProcessSchema[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchProcesses = useCallback(async () => {
@@ -21,8 +21,13 @@ export function useProcess() {
   }, []);
 
   useEffect(() => {
-    fetchProcesses();
-  }, [fetchProcesses]);
+    let cancelled = false;
+    getProcesses()
+      .then(data => { if (!cancelled) setProcesses(data); })
+      .catch(() => { if (!cancelled) setError('Failed to load processes'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
 
   return { processes, loading, error, refetch: fetchProcesses };
 }
