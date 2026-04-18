@@ -27,7 +27,10 @@ def test_valid_output():
     pass
 
 
-@given(parsers.parse("a {process_type} simulator with default parameters"), target_fixture="context")
+@given(
+    parsers.parse("a {process_type} simulator with default parameters"),
+    target_fixture="context",
+)
 def simulator_with_defaults(process_type):
     sim_class = SIMULATORS[process_type]
     sim = sim_class()

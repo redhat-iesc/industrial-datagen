@@ -17,7 +17,10 @@ def test_rotating_fault_types():
     pass
 
 
-@scenario("anomaly_injection.feature", "Anomaly rate is approximately 5 percent for standard simulators")
+@scenario(
+    "anomaly_injection.feature",
+    "Anomaly rate is approximately 5 percent for standard simulators",
+)
 def test_standard_anomaly_rate():
     pass
 

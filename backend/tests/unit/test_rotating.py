@@ -92,7 +92,11 @@ class TestRotatingEquipmentSimulator:
     def test_generate_dataset_fault_types(self):
         dataset = self.sim.generate_dataset(1000, include_anomalies=True)
         fault_types = {row["faultType"] for row in dataset if row["anomaly"] == 1}
-        assert "bearing_fault" in fault_types or "rotor_imbalance" in fault_types or "misalignment" in fault_types
+        assert (
+            "bearing_fault" in fault_types
+            or "rotor_imbalance" in fault_types
+            or "misalignment" in fault_types
+        )
 
     def test_get_schema(self):
         schema = self.sim.get_schema()
