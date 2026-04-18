@@ -1,9 +1,9 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class DatasetStatus(str, Enum):
+class DatasetStatus(StrEnum):
     GENERATING = "generating"
     READY = "ready"
     FAILED = "failed"

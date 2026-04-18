@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import time
 import uuid
 
@@ -123,10 +124,8 @@ async def stop_simulation(sim_id: str, request: Request):
     task = sim_tasks.pop(sim_id, None)
     if task:
         task.cancel()
-        try:
+        with contextlib.suppress(asyncio.CancelledError):
             await task
-        except asyncio.CancelledError:
-            pass
 
     active_sims = _get_active_sims(request)
     active_sims.pop(sim_id, None)
@@ -171,6 +170,6 @@ async def inject_fault(sim_id: str, body: FaultRequest, request: Request):
     try:
         sim.inject_fault(body.fault_type)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from None
 
     return {"status": "ok", "faultType": body.fault_type}

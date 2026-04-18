@@ -1,3 +1,5 @@
+import math
+
 from pytest_bdd import given, parsers, scenario, then, when
 
 from app.simulators.chemical import ChemicalSimulator
@@ -55,7 +57,7 @@ def numeric_values_valid(context):
     result = context["result"]
     for key, value in result.items():
         if isinstance(value, (int, float)) and key != "timestamp":
-            assert not (value != value), f"NaN detected for {key}"
+            assert not math.isnan(value), f"NaN detected for {key}"
 
 
 # --- Scenario: Parameter changes affect simulator output ---
