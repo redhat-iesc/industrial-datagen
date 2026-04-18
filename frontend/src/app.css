@@ -32,6 +32,10 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .rh-masthead .pf-v6-c-masthead__toggle .pf-v6-c-button {
+  color: var(--rh-red);
+}
+
+.rh-masthead .pf-v6-c-masthead__toggle .pf-v6-c-button:hover {
   color: var(--rh-white);
 }
 
@@ -44,7 +48,7 @@ h1, h2, h3, h4, h5, h6,
   font-family: 'Red Hat Display', sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--rh-white);
+  color: var(--rh-red);
 }
 
 .rh-brand-version {
@@ -75,6 +79,24 @@ h1, h2, h3, h4, h5, h6,
 .rh-section-compact {
   padding-top: var(--pf-t--global--spacer--md);
   padding-bottom: var(--pf-t--global--spacer--md);
+}
+
+.rh-process-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--pf-t--global--spacer--md);
+}
+
+@media (max-width: 992px) {
+  .rh-process-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .rh-process-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pf-v6-c-card.rh-process-card {
