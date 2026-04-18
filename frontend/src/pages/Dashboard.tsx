@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import {
+  Button,
   Grid,
   GridItem,
   PageSection,
@@ -29,6 +31,7 @@ const PROCESS_NAMES: Record<string, string> = {
 export default function Dashboard() {
   const sim = useSimulation();
   const rtsp = useRTSPStream();
+  const [showRTSP, setShowRTSP] = useState(false);
 
   return (
     <>
@@ -55,13 +58,23 @@ export default function Dashboard() {
             />
           </StackItem>
           <StackItem>
-            <RTSPConfigPanel
-              configs={rtsp.configs}
-              onSaveUrl={rtsp.setUrl}
-              onStart={rtsp.startStream}
-              onStop={rtsp.stopStream}
-            />
+            <Button
+              variant="secondary"
+              onClick={() => setShowRTSP((prev) => !prev)}
+            >
+              {showRTSP ? 'Hide Camera Feeds' : 'Show Camera Feeds'}
+            </Button>
           </StackItem>
+          {showRTSP && (
+            <StackItem>
+              <RTSPConfigPanel
+                configs={rtsp.configs}
+                onSaveUrl={rtsp.setUrl}
+                onStart={rtsp.startStream}
+                onStop={rtsp.stopStream}
+              />
+            </StackItem>
+          )}
           {rtsp.configs[sim.selectedProcess]?.status === 'streaming' && (
             <StackItem>
               <RTSPVideoPlayer
