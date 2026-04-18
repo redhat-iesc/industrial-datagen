@@ -2,8 +2,6 @@ import {
   Card,
   CardBody,
   CardTitle,
-  Gallery,
-  GalleryItem,
 } from '@patternfly/react-core';
 import type { ProcessType } from '../../types';
 
@@ -29,22 +27,22 @@ interface Props {
 
 export default function ProcessSelector({ selected, onSelect, disabled }: Props) {
   return (
-    <Gallery hasGutter minWidths={{ default: '160px' }}>
+    <div className="rh-process-grid">
       {PROCESSES.map(p => (
-        <GalleryItem key={p.type}>
-          <Card
-            isSelectable
-            isSelected={selected === p.type}
-            isDisabled={disabled}
-            onClick={() => !disabled && onSelect(p.type)}
-            isCompact
-            className="rh-process-card"
-          >
-            <CardTitle>{p.label}</CardTitle>
-            <CardBody>{p.description}</CardBody>
-          </Card>
-        </GalleryItem>
+        <Card
+          key={p.type}
+          isSelectable
+          isSelected={selected === p.type}
+          isDisabled={disabled}
+          onClick={() => !disabled && onSelect(p.type)}
+          isCompact
+          isFullHeight
+          className="rh-process-card"
+        >
+          <CardTitle>{p.label}</CardTitle>
+          <CardBody>{p.description}</CardBody>
+        </Card>
       ))}
-    </Gallery>
+    </div>
   );
 }
