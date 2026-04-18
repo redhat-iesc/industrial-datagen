@@ -36,7 +36,7 @@ export default function StatisticsPanel({ data }: Props) {
     <Grid hasGutter>
       {stats.map(s => (
         <GridItem key={s.key} span={3} sm={6} md={3}>
-          <Card isCompact isFlat>
+          <Card isCompact isPlain>
             <CardTitle style={{ fontSize: '0.85rem' }}>{s.key}</CardTitle>
             <CardBody>
               <div style={{ fontSize: '1.5rem', fontWeight: 600 }}>

@@ -35,7 +35,7 @@ export default function ProcessSelector({ selected, onSelect, disabled }: Props)
           <Card
             isSelectable
             isSelected={selected === p.type}
-            isDisabledRaised={disabled}
+            isDisabled={disabled}
             onClick={() => !disabled && onSelect(p.type)}
             isCompact
           >
