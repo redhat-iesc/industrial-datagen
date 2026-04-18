@@ -1,5 +1,6 @@
 import math
 import random
+from typing import Any
 
 from app.simulators.base import BaseSimulator, OutputField, ParameterDef
 
@@ -50,7 +51,7 @@ class ChemicalSimulator(BaseSimulator):
         self.state["totalConversion"] = 0.0
         self.state["catalystDeactivation"] = 0.0
 
-    def step(self) -> dict:
+    def step(self) -> dict[str, Any]:
         t = self.state["timeStep"]
         p = self.parameters
 
@@ -122,7 +123,7 @@ class ChemicalSimulator(BaseSimulator):
             "mixingEfficiency": round(mixing_eff, 4),
         }
 
-    def _normal_params(self, index: int) -> dict:
+    def _normal_params(self, index: int) -> dict[str, float]:
         return {
             "reactantA": 95 + random.random() * 10,
             "reactantB": 95 + random.random() * 10,
@@ -132,7 +133,7 @@ class ChemicalSimulator(BaseSimulator):
             "stirringSpeed": 280 + random.random() * 40,
         }
 
-    def _anomaly_params(self, index: int) -> dict:
+    def _anomaly_params(self, index: int) -> dict[str, float]:
         return {
             "reactantA": 80 + random.random() * 80,
             "reactantB": 80 + random.random() * 80,

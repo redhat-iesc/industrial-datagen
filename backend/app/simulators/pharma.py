@@ -1,5 +1,6 @@
 import math
 import random
+from typing import Any
 
 from app.simulators.base import BaseSimulator, OutputField, ParameterDef
 
@@ -16,7 +17,7 @@ class PharmaSimulator(BaseSimulator):
     MAX_CONVERSION = 0.94
     RATE_CONSTANT = 0.015  # min^-1
 
-    CQA_LIMITS = {
+    CQA_LIMITS: dict[str, dict[str, float]] = {
         "purity": {"min": 99.0, "max": 100.0},
         "assay": {"min": 98.0, "max": 102.0},
         "relatedSubstances": {"max": 0.5},
@@ -115,7 +116,7 @@ class PharmaSimulator(BaseSimulator):
         else:
             return "WARNING"
 
-    def step(self) -> dict:
+    def step(self) -> dict[str, Any]:
         t = self.state["timeStep"]
         p = self.parameters
 
@@ -202,7 +203,7 @@ class PharmaSimulator(BaseSimulator):
             "gmpCompliant": gmp_compliant,
         }
 
-    def _normal_params(self, index: int) -> dict:
+    def _normal_params(self, index: int) -> dict[str, float]:
         return {
             "apiConc": 98 + random.random() * 4,
             "solventVol": 500,
@@ -213,7 +214,7 @@ class PharmaSimulator(BaseSimulator):
             "pH": 6.6 + random.random() * 0.4,
         }
 
-    def _anomaly_params(self, index: int) -> dict:
+    def _anomaly_params(self, index: int) -> dict[str, float]:
         return {
             "apiConc": 80 + random.random() * 50,
             "solventVol": 500,

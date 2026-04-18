@@ -2,6 +2,7 @@ import math
 import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
@@ -24,11 +25,11 @@ class BaseSimulator(ABC):
     name: str = ""
     description: str = ""
 
-    def __init__(self, parameters: dict | None = None):
-        self.parameters = {p.name: p.default for p in self.parameter_defs()}
+    def __init__(self, parameters: dict[str, float] | None = None):
+        self.parameters: dict[str, float] = {p.name: p.default for p in self.parameter_defs()}
         if parameters:
             self.parameters.update(parameters)
-        self.state: dict = {}
+        self.state: dict[str, Any] = {}
         self._init_state()
 
     @abstractmethod
@@ -40,7 +41,7 @@ class BaseSimulator(ABC):
         ...
 
     @abstractmethod
-    def step(self) -> dict:
+    def step(self) -> dict[str, Any]:
         ...
 
     def _init_state(self) -> None:
@@ -49,7 +50,7 @@ class BaseSimulator(ABC):
     def reset(self) -> None:
         self._init_state()
 
-    def get_schema(self) -> dict:
+    def get_schema(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "description": self.description,
@@ -71,7 +72,7 @@ class BaseSimulator(ABC):
 
     def generate_dataset(
         self, samples: int, include_anomalies: bool = True
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         dataset = []
         for i in range(samples):
             sim = self.__class__()
@@ -88,11 +89,11 @@ class BaseSimulator(ABC):
         return 0.05
 
     @abstractmethod
-    def _normal_params(self, index: int) -> dict:
+    def _normal_params(self, index: int) -> dict[str, float]:
         ...
 
     @abstractmethod
-    def _anomaly_params(self, index: int) -> dict:
+    def _anomaly_params(self, index: int) -> dict[str, float]:
         ...
 
     @staticmethod

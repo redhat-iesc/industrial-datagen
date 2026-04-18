@@ -1,5 +1,6 @@
 import math
 import random
+from typing import Any
 
 from app.simulators.base import BaseSimulator, OutputField, ParameterDef
 
@@ -42,7 +43,7 @@ class RefinerySimulator(BaseSimulator):
         self.state["totalProcessed"] = 0.0
         self.state["catalystDegradation"] = 0.0
 
-    def step(self) -> dict:
+    def step(self) -> dict[str, Any]:
         t = self.state["timeStep"]
         p = self.parameters
 
@@ -99,7 +100,7 @@ class RefinerySimulator(BaseSimulator):
             "totalProcessed": round(self.state["totalProcessed"], 2),
         }
 
-    def _normal_params(self, index: int) -> dict:
+    def _normal_params(self, index: int) -> dict[str, float]:
         return {
             "crudeTemp": 345 + random.random() * 10,
             "pressure": 14 + random.random() * 2,
@@ -107,7 +108,7 @@ class RefinerySimulator(BaseSimulator):
             "catalystActivity": max(0, 1.0 - index * 0.00001),
         }
 
-    def _anomaly_params(self, index: int) -> dict:
+    def _anomaly_params(self, index: int) -> dict[str, float]:
         return {
             "crudeTemp": 320 + random.random() * 80,
             "pressure": 12 + random.random() * 8,
