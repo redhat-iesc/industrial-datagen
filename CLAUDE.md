@@ -57,7 +57,7 @@ deploy/           Deployment configs
 ## Git
 
 - **Conventional Commits:** All commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) spec (`feat:`, `fix:`, `test:`, `chore:`, `docs:`, `refactor:`, `ci:`, etc.).
-- **Incremental commits:** Make small, logical commits — one concern per commit. Do not batch unrelated changes.
+- **Incremental commits:** Commit immediately after each logical unit of work is complete — one concern per commit. Never batch changes or defer commits until the end. Do not batch unrelated changes.
 - **Tests required:** All tests must pass before committing. Run `make test-frontend` / `make test-backend` to verify.
 - **No force-push to main:** Never force-push to the main branch.
 
