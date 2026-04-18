@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse
 
@@ -37,7 +35,9 @@ async def get_rtsp_config(request: Request) -> dict[str, RTSPConfigEntry]:
 
 
 @router.put("/config/{process_type}")
-async def set_rtsp_url(process_type: str, body: SetRTSPUrlRequest, request: Request) -> RTSPConfigEntry:
+async def set_rtsp_url(
+    process_type: str, body: SetRTSPUrlRequest, request: Request,
+) -> RTSPConfigEntry:
     _validate_process_type(process_type)
     manager = _get_manager(request)
     manager.set_url(process_type, body.url)
@@ -52,7 +52,7 @@ async def start_stream(process_type: str, request: Request) -> StreamActionRespo
     try:
         state = await manager.start_stream(process_type)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from None
     return StreamActionResponse(
         processType=process_type,
         status=state.status,
