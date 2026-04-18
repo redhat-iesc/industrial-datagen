@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: industrial-datagen
+  labels:
+    app.kubernetes.io/name: industrial-datagen
+spec:
+  to:
+    kind: Service
+    name: industrial-datagen
+    weight: 100
+  port:
+    targetPort: 8000
+  tls:
+    termination: edge
