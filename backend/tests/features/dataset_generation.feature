@@ -32,3 +32,18 @@ Feature: Dataset Generation
     And I convert the dataset to CSV
     Then the CSV has 11 lines
     And the first line is a header row
+
+  Scenario: Dataset shows cumulative degradation on refinery
+    Given a refinery simulator
+    When I generate a dataset with 10 samples
+    Then catalystLevel decreases progressively across rows
+
+  Scenario: Dataset totalProcessed accumulates across rows
+    Given a refinery simulator
+    When I generate a dataset with 5 samples
+    Then totalProcessed increases across all rows
+
+  Scenario: Dataset timestamps are sequential
+    Given a chemical simulator
+    When I generate a dataset with 10 samples
+    Then timestamps increment by exactly 1 each row
