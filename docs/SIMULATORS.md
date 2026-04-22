@@ -341,7 +341,9 @@ Faults are injected via `inject_fault(fault_type)` and progress over time:
 
 ## Dataset Generation
 
-All simulators support bulk dataset generation via `generate_dataset(samples, include_anomalies)`:
+All simulators support bulk dataset generation via `generate_dataset(samples, include_anomalies)`.
+
+Datasets are **temporally continuous** — stateful accumulators (total processed, catalyst degradation, fault progression, batch progress) accumulate across rows to produce realistic time-series data suitable for ML training with autocorrelation.
 
 ```mermaid
 flowchart LR
@@ -350,9 +352,12 @@ flowchart LR
         A[include_anomalies flag]
     end
 
-    subgraph Loop["For each sample"]
-        Fresh["Fresh simulator instance"]
-        Check{"Random < 5%<br/>anomaly rate?"}
+    subgraph Init
+        Single["Single simulator instance"]
+    end
+
+    subgraph Loop["For each sample (consecutive timestep)"]
+        Check{"Random < anomaly<br/>rate?"}
         Normal["_normal_params(i)"]
         Anomaly["_anomaly_params(i)"]
         Step["step() → row"]
@@ -360,18 +365,18 @@ flowchart LR
     end
 
     subgraph Output
-        Dataset["list of dicts<br/>→ CSV or JSON"]
+        Dataset["list of dicts<br/>→ CSV or JSON<br/>temporal series"]
     end
 
-    N --> Loop
+    N --> Init
     A --> Check
-    Fresh --> Check
+    Init --> Loop
     Check -- "No" --> Normal --> Step
     Check -- "Yes" --> Anomaly --> Step
     Step --> Tag --> Dataset
 ```
 
-Each sample creates a fresh simulator instance with randomized parameters to produce independent, identically distributed rows. The `anomaly` column (0 or 1) serves as a label for supervised ML training.
+Each row builds on the previous simulator state: state accumulators (total processed, catalyst degradation, fault severity, batch progress) naturally increase across rows. Timestamps are sequential integers starting at 0. This is intentional: ML training data requires temporal correlation and drift patterns. The `anomaly` column (0 or 1) serves as a label for supervised ML training.
 
 ## Related Documentation
 
