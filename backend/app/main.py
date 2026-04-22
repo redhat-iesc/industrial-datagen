@@ -1,10 +1,11 @@
+import asyncio
 import os
 import time
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,8 +18,12 @@ from app.api.simulations import router as simulations_router
 from app.api.statistics import router as statistics_router
 from app.api.streaming import router as streaming_router
 from app.config import settings
+from app.context import AppContext, create_app_context
 from app.rtsp.manager import RTSPStreamManager
 from app.storage.memory import MemoryStorage
+
+start_time: float = 0.0
+
 
 start_time: float = 0.0
 
@@ -27,14 +32,15 @@ start_time: float = 0.0
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     global start_time
     start_time = time.time()
-    app.state.storage = MemoryStorage()
-    app.state.active_simulations = {}
-    app.state.simulation_tasks = {}
-    app.state.rtsp_manager = RTSPStreamManager()
+    storage, rtsp_manager = create_app_context()
+    app.state.app_context = AppContext(storage, rtsp_manager)
     yield
-    await app.state.rtsp_manager.stop_all()
-    for task in app.state.simulation_tasks.values():
-        task.cancel()
+    await app.state.app_context.cleanup()
+
+
+async def get_app_context(request: Request) -> AppContext:
+    """FastAPI dependency providing centralized app state."""
+    return request.app.state.app_context  # type: ignore[no-any-return]
 
 
 app = FastAPI(
