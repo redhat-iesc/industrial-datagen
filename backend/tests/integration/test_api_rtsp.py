@@ -94,7 +94,7 @@ class TestHLSServing:
 
     @pytest.mark.asyncio
     async def test_segment_served_when_exists(self, client) -> None:
-        manager = client._transport.app.state.rtsp_manager
+        manager = client._transport.app.state.app_context.rtsp_manager
         stream_dir = manager.get_stream_dir("refinery")
         stream_dir.mkdir(parents=True, exist_ok=True)
         (stream_dir / "seg000.ts").write_bytes(b"\x00" * 188)
@@ -105,7 +105,7 @@ class TestHLSServing:
 
     @pytest.mark.asyncio
     async def test_playlist_served_when_exists(self, client) -> None:
-        manager = client._transport.app.state.rtsp_manager
+        manager = client._transport.app.state.app_context.rtsp_manager
         stream_dir = manager.get_stream_dir("refinery")
         stream_dir.mkdir(parents=True, exist_ok=True)
         (stream_dir / "stream.m3u8").write_text("#EXTM3U\n#EXT-X-VERSION:3\n")
