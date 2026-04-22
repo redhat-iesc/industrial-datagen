@@ -88,3 +88,45 @@ async def test_delete_dataset(client):
 async def test_download_nonexistent_dataset(client):
     resp = await client.get("/api/datasets/nonexistent/download")
     assert resp.status_code == 404
+
+
+async def test_generated_dataset_has_temporal_data(client):
+    """API-generated datasets should have accumulating state and sequential timestamps."""
+    gen_resp = await client.post("/api/datasets/generate", json={
+        "processType": "refinery",
+        "samples": 50,
+        "includeAnomalies": False,
+        "format": "json",
+    })
+    dataset_id = gen_resp.json()["id"]
+
+    resp = await client.get(f"/api/datasets/{dataset_id}/download?format=json")
+    data = resp.json()
+
+    assert len(data) == 50
+    # Timestamps must be sequential
+    timestamps = [row["timestamp"] for row in data]
+    assert timestamps == list(range(50))
+    # totalProcessed must accumulate (non-decreasing)
+    for i in range(1, len(data)):
+        assert data[i]["totalProcessed"] >= data[i - 1]["totalProcessed"]
+
+
+async def test_large_dataset_generates(client):
+    """Verify the API handles large dataset generation (10k samples)."""
+    gen_resp = await client.post("/api/datasets/generate", json={
+        "processType": "chemical",
+        "samples": 10000,
+        "includeAnomalies": True,
+        "format": "csv",
+    })
+    assert gen_resp.status_code == 200
+    data = gen_resp.json()
+    assert data["status"] == "ready"
+    assert data["samples"] == 10000
+
+    # Download and validate
+    resp = await client.get(f"/api/datasets/{data['id']}/download?format=csv")
+    assert resp.status_code == 200
+    lines = resp.text.strip().split("\n")
+    assert len(lines) == 10001  # header + data
