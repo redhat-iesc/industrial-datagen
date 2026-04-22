@@ -33,6 +33,21 @@ def test_csv_format():
     pass
 
 
+@scenario("dataset_generation.feature", "Dataset shows cumulative degradation on refinery")
+def test_catalyst_degrades():
+    pass
+
+
+@scenario("dataset_generation.feature", "Dataset totalProcessed accumulates across rows")
+def test_total_processed_accumulates():
+    pass
+
+
+@scenario("dataset_generation.feature", "Dataset timestamps are sequential")
+def test_timestamps_sequential():
+    pass
+
+
 # --- Given steps ---
 
 @given(parse("a {process_type} simulator"), target_fixture="ctx")
@@ -82,6 +97,45 @@ def check_row_count(ctx, count):
 def each_row_has_timestamp(ctx):
     for row in ctx["dataset"]:
         assert "timestamp" in row
+
+
+@then("catalystLevel decreases progressively across rows")
+def catalyst_degrades_in_dataset(ctx):
+    """catalystLevel should deplete over the dataset (ignoring tiny noise)."""
+    rows = ctx["dataset"]
+    for i in range(1, len(rows)):
+        assert rows[i].get("catalystLevel", 0) <= rows[i-1].get("catalystLevel", 0) + 0.01
+
+
+@then("totalProcessed increases across all rows")
+def total_processed_increases(ctx):
+    """Total processed should be non-decreasing across dataset rows."""
+    rows = ctx["dataset"]
+    for i in range(1, len(rows)):
+        assert rows[i].get("totalProcessed", 0) >= rows[i-1].get("totalProcessed", 0)
+
+
+@then("timestamps increment by exactly 1 each row")
+def timestamps_increment(ctx):
+    """Each dataset row's timestamp should be the previous plus 1."""
+    rows = ctx["dataset"]
+    for i in range(1, len(rows)):
+        assert rows[i]["timestamp"] - rows[i-1]["timestamp"] == 1
+
+
+@then("all rows share the same batchNumber")
+def all_rows_same_batch(ctx):
+    """All rows in a single dataset share the same batch number."""
+    batch_nums = {r.get("batchNumber") for r in ctx["dataset"]}
+    assert len(batch_nums) == 1, f"Expected 1 batchNumber, got {batch_nums}"
+
+
+@then("batchProgress grows across dataset rows")
+def batch_progress_grows(ctx):
+    """Batch progress should be non-decreasing across dataset rows."""
+    rows = ctx["dataset"]
+    for i in range(1, len(rows)):
+        assert rows[i].get("batchProgress", 0) >= rows[i-1].get("batchProgress", 0)
 
 
 @then("each row contains an anomaly label")
