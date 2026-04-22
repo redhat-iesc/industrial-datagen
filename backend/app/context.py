@@ -1,29 +1,34 @@
-"""Application context: dependency-injected shared state for FastAPI."""
+"""Application context: dependency-injected shared state for FastAPI.
+
+Replaces direct ``app.state`` attribute assignments with a single
+centralized context object that provides:
+- Explicit lifecycle (init/cleanup)
+- Per-test isolation
+- Type-safe access to storage, simulations, and RTSP resources
+"""
 
 from __future__ import annotations
 
 import asyncio
 import contextlib
-from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
-
-class BaseStorage(ABC):
-    """Minimal storage interface for type-safe AppContext."""
-
-    pass  # Full interface in app.storage.base
+if TYPE_CHECKING:
+    from app.rtsp.manager import RTSPStreamManager
+    from app.storage.base import BaseStorage
 
 
 class AppContext:
-    """Centralized, dependency-injected application state.
+    """Centralized application state with explicit lifecycle management.
 
     Replaces direct ``app.state`` assignments so that:
     - Storage and simulator state have explicit lifecycle management
     - Each test gets an isolated context instance
     - Multi-worker deployments get per-worker state automatically
-    - Cleanup follows a protocol instead of manual ``stop_all()`` calls
+    - Cleanup follows a protocol instead of manual stop_all() calls
     """
 
-    def __init__(self, storage: BaseStorage, rtsp_manager: object) -> None:
+    def __init__(self, storage: BaseStorage, rtsp_manager: RTSPStreamManager) -> None:
         self.storage = storage
         self.active_simulations: dict[str, object] = {}
         self.simulation_tasks: dict[str, asyncio.Task[None]] = {}
@@ -40,22 +45,12 @@ class AppContext:
             await self.rtsp_manager.stop_all()
 
 
-async def get_app_context() -> AppContext:
-    """Create a fresh AppContext at application startup.
-
-    In production the lifespan manages the single instance.
-    Tests create instances in fixtures so each test gets isolation.
-    """
+def create_app_context() -> tuple[BaseStorage, RTSPStreamManager]:  # noqa: PLR0911
+    """Factory for production application context."""
+    # Import here to avoid circular imports at module load time
     from app.rtsp.manager import RTSPStreamManager
     from app.storage.memory import MemoryStorage
 
     storage = MemoryStorage()
     rtsp_manager = RTSPStreamManager()
-    return AppContext(storage, rtsp_manager)
-
-
-async def get_context(request: object) -> AppContext:  # noqa: ANN101
-    """FastAPI dependency that provides AppContext to route handlers."""
-    # AppContext lives on app.state for now; depends on lifespan injection.
-    ctx: AppContext = request.app.state.app_context
-    return ctx
+    return storage, rtsp_manager
