@@ -74,8 +74,8 @@ class BaseSimulator(ABC):
         self, samples: int, include_anomalies: bool = True
     ) -> list[dict[str, Any]]:
         dataset = []
+        sim: BaseSimulator = self.__class__()
         for i in range(samples):
-            sim = self.__class__()
             is_anomaly = include_anomalies and random.random() < self._anomaly_rate()
             params = self._anomaly_params(i) if is_anomaly else self._normal_params(i)
             sim.parameters.update(params)
