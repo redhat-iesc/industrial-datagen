@@ -8,6 +8,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
+from app.context import AppContext
 from app.models.dataset import DatasetStatus, GenerateDatasetRequest
 from app.simulators import get_simulator_class
 from app.storage.base import BaseStorage
@@ -16,7 +17,7 @@ router = APIRouter(tags=["datasets"])
 
 
 def _get_storage(request: Request) -> BaseStorage:
-    return request.app.state.storage  # type: ignore[no-any-return]
+    return request.app.state.app_context.storage  # type: ignore[no-any-return]
 
 
 @router.post("/datasets/generate")

@@ -12,6 +12,7 @@ from app.models.simulation import (
     SimulationStatus,
     StartSimulationRequest,
 )
+from app.context import AppContext
 from app.simulators import get_simulator_class
 from app.simulators.base import BaseSimulator
 from app.simulators.rotating import RotatingEquipmentSimulator
@@ -21,15 +22,15 @@ router = APIRouter(tags=["simulations"])
 
 
 def _get_storage(request: Request) -> BaseStorage:
-    return request.app.state.storage  # type: ignore[no-any-return]
+    return request.app.state.app_context.storage  # type: ignore[no-any-return]
 
 
 def _get_active_sims(request: Request) -> dict[str, BaseSimulator]:
-    return request.app.state.active_simulations  # type: ignore[no-any-return]
+    return request.app.state.app_context.active_simulations  # type: ignore[no-any-return]
 
 
 def _get_sim_tasks(request: Request) -> dict[str, asyncio.Task[None]]:
-    return request.app.state.simulation_tasks  # type: ignore[no-any-return]
+    return request.app.state.app_context.simulation_tasks  # type: ignore[no-any-return]
 
 
 @router.get("/simulations")

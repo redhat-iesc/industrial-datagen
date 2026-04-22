@@ -5,14 +5,16 @@ from collections.abc import AsyncGenerator
 from fastapi import APIRouter, HTTPException, Request, WebSocket, WebSocketDisconnect
 from starlette.responses import StreamingResponse
 
+from app.context import AppContext
+from app.storage.base import BaseStorage
+
 router = APIRouter(tags=["streaming"])
 
 
 @router.websocket("/ws/simulation/{sim_id}")
 async def simulation_websocket(websocket: WebSocket, sim_id: str) -> None:
     await websocket.accept()
-
-    storage = websocket.app.state.storage
+    storage: BaseStorage = websocket.app.state.app_context.storage  # type: ignore[no-any-return]
     sim_info = await storage.get_simulation(sim_id)
     if not sim_info:
         await websocket.close(code=4004, reason="Simulation not found")
@@ -38,7 +40,7 @@ async def simulation_websocket(websocket: WebSocket, sim_id: str) -> None:
 
 @router.get("/simulation/{sim_id}/feed")
 async def simulation_sse(sim_id: str, request: Request) -> StreamingResponse:
-    storage = request.app.state.storage
+    storage = request.app.state.app_context.storage  # type: ignore[no-any-return]
     sim_info = await storage.get_simulation(sim_id)
     if not sim_info:
         raise HTTPException(status_code=404, detail="Simulation not found")

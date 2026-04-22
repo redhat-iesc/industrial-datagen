@@ -16,7 +16,7 @@ def _validate_process_type(process_type: str) -> None:
 
 
 def _get_manager(request: Request) -> RTSPStreamManager:
-    manager: RTSPStreamManager = request.app.state.rtsp_manager
+    manager: RTSPStreamManager = request.app.state.app_context.rtsp_manager  # type: ignore[no-any-return]
     return manager
 
 
