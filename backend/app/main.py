@@ -22,9 +22,6 @@ from app.context import AppContext, create_app_context
 start_time: float = 0.0
 
 
-start_time: float = 0.0
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     global start_time
