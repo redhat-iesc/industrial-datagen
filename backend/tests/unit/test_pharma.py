@@ -67,6 +67,18 @@ class TestPharmaSimulator:
         anomaly_rate = anomaly_count / len(dataset)
         assert 0.02 < anomaly_rate < 0.10
 
+    def test_dataset_batch_consistent(self):
+        """All rows in a single dataset must share the same batch number."""
+        dataset = self.sim.generate_dataset(10)
+        batch_nums = {r.get("batchNumber") for r in dataset}
+        assert len(batch_nums) == 1
+
+    def test_dataset_progress_grows(self):
+        """Batch progress should be non-decreasing across dataset."""
+        dataset = self.sim.generate_dataset(20)
+        for i in range(1, len(dataset)):
+            assert dataset[i].get("batchProgress", 0) >= dataset[i - 1].get("batchProgress", 0)
+
     def test_get_schema(self):
         schema = self.sim.get_schema()
         assert schema["name"] == "pharma"

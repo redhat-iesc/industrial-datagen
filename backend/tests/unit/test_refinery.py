@@ -83,3 +83,29 @@ class TestRefinerySimulator:
         assert "parameters" in schema
         assert "outputs" in schema
         assert len(schema["parameters"]) == 4
+
+    def test_dataset_has_temporal_continuity(self):
+        """Dataset rows should form a continuous time series with accumulating state."""
+        dataset = self.sim.generate_dataset(10)
+        assert len(dataset) == 10
+        # Timestamps should be sequential integers
+        for i, row in enumerate(dataset):
+            assert row["timestamp"] == i
+
+    def test_dataset_accumulators_progress(self):
+        """State accumulators should increase over the dataset."""
+        dataset = self.sim.generate_dataset(50)
+        initial = dataset[0]["totalProcessed"]
+        final = dataset[-1]["totalProcessed"]
+        assert final > initial * 1.5, (
+            f"totalProcessed should accumulate: {initial} → {final}"
+        )
+
+    def test_dataset_continuous_step(self):
+        """Each row should build on the previous simulator state."""
+        dataset = self.sim.generate_dataset(5)
+        for i in range(1, len(dataset)):
+            assert (dataset[i]["totalProcessed"] >= dataset[i - 1]["totalProcessed"]), (
+                f"totalProcessed must accumulate: row {i-1}={dataset[i - 1]['totalProcessed']}" 
+                f" → row {i}={dataset[i]['totalProcessed']}"
+            )
