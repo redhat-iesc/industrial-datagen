@@ -2,8 +2,6 @@
 
 import asyncio
 
-import pytest
-
 from app.context import AppContext
 from app.rtsp.manager import RTSPStreamManager
 from app.storage.memory import MemoryStorage

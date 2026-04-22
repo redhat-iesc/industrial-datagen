@@ -5,7 +5,6 @@ from collections.abc import AsyncGenerator
 from fastapi import APIRouter, HTTPException, Request, WebSocket, WebSocketDisconnect
 from starlette.responses import StreamingResponse
 
-from app.context import AppContext
 from app.storage.base import BaseStorage
 
 router = APIRouter(tags=["streaming"])

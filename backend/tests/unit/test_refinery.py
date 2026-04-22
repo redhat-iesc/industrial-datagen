@@ -106,6 +106,6 @@ class TestRefinerySimulator:
         dataset = self.sim.generate_dataset(5)
         for i in range(1, len(dataset)):
             assert (dataset[i]["totalProcessed"] >= dataset[i - 1]["totalProcessed"]), (
-                f"totalProcessed must accumulate: row {i-1}={dataset[i - 1]['totalProcessed']}" 
+                f"totalProcessed must accumulate: row {i-1}={dataset[i - 1]['totalProcessed']}"
                 f" → row {i}={dataset[i]['totalProcessed']}"
             )

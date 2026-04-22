@@ -1,4 +1,3 @@
-import asyncio
 import os
 import time
 from collections.abc import AsyncGenerator
@@ -19,8 +18,6 @@ from app.api.statistics import router as statistics_router
 from app.api.streaming import router as streaming_router
 from app.config import settings
 from app.context import AppContext, create_app_context
-from app.rtsp.manager import RTSPStreamManager
-from app.storage.memory import MemoryStorage
 
 start_time: float = 0.0
 

@@ -12,7 +12,6 @@ from app.models.simulation import (
     SimulationStatus,
     StartSimulationRequest,
 )
-from app.context import AppContext
 from app.simulators import get_simulator_class
 from app.simulators.base import BaseSimulator
 from app.simulators.rotating import RotatingEquipmentSimulator
