@@ -245,17 +245,17 @@ class RotatingEquipmentSimulator(BaseSimulator):
     ) -> list[dict[str, Any]]:
         fault_types = ["bearing_fault", "rotor_imbalance", "misalignment"]
         dataset = []
+        sim = self.__class__()
         for i in range(samples):
-            sim = self.__class__()
             is_anomaly = include_anomalies and random.random() < self._anomaly_rate()
             params = self._anomaly_params(i) if is_anomaly else self._normal_params(i)
             sim.parameters.update(params)
             sim.state["timeStep"] = i
 
             if is_anomaly:
-                fault = fault_types[random.randint(0, len(fault_types) - 1)]
+                fault = fault_types[i % len(fault_types)]
                 sim.state["activeFault"] = fault
-                sim.state["faultProgress"] = 0.1 + random.random() * 0.8
+                sim.state["faultProgress"] = 0.05 + random.random() * 0.05
 
             row = sim.step()
             row["anomaly"] = 1 if is_anomaly else 0
