@@ -8,7 +8,6 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
-from app.context import AppContext
 from app.models.dataset import DatasetStatus, GenerateDatasetRequest
 from app.simulators import get_simulator_class
 from app.storage.base import BaseStorage
